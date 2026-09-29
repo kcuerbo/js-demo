@@ -1,0 +1,2532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>// path/to/swe — python roadmap tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#13151A;
+    --surface:#1C1F26;
+    --surface-hover:#22262F;
+    --border:#2B2F3A;
+    --text:#E6E8EC;
+    --text-dim:#9098A8;
+    --text-faint:#5B6272;
+    --green:#5FD89A;
+    --green-dim:#2E5C49;
+    --amber:#E8A33D;
+    --amber-dim:#5C4720;
+    --slate:#6B7280;
+    --mono:'JetBrains Mono', monospace;
+    --sans:Inter, sans-serif;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:var(--sans);
+    min-height:100vh;
+    line-height:1.5;
+  }
+  body::before{
+    content:'';
+    position:fixed;
+    inset:0;
+    background-image:
+      radial-gradient(circle at 15% 8%, rgba(95,216,154,0.05), transparent 40%),
+      radial-gradient(circle at 85% 70%, rgba(232,163,61,0.04), transparent 40%);
+    pointer-events:none;
+    z-index:0;
+  }
+
+  /* ===== Header ===== */
+  header{
+    position:sticky;
+    top:0;
+    z-index:50;
+    background:rgba(19,21,26,0.92);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  .header-inner{
+    max-width:760px;
+    margin:0 auto;
+    padding:18px 24px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+  }
+  .brand{
+    font-family:var(--mono);
+    font-size:14px;
+    color:var(--text-dim);
+    white-space:nowrap;
+  }
+  .brand .dim{color:var(--text-faint);}
+  .brand .accent{color:var(--green);}
+  .progress-wrap{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    flex:1;
+    max-width:280px;
+    margin-left:24px;
+  }
+  .progress-track{
+    flex:1;
+    height:6px;
+    background:var(--surface);
+    border-radius:3px;
+    overflow:hidden;
+    border:1px solid var(--border);
+  }
+  .progress-fill{
+    height:100%;
+    background:var(--green);
+    border-radius:3px;
+    width:0%;
+    transition:width .4s ease;
+  }
+  .progress-pct{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--green);
+    min-width:38px;
+    text-align:right;
+  }
+  .reset-btn{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--text-faint);
+    background:none;
+    border:1px solid var(--border);
+    border-radius:6px;
+    padding:6px 10px;
+    cursor:pointer;
+    transition:border-color .15s, color .15s;
+    white-space:nowrap;
+  }
+  .reset-btn:hover{border-color:var(--slate); color:var(--text-dim);}
+
+  /* ===== Hero ===== */
+  .hero{
+    max-width:760px;
+    margin:0 auto;
+    padding:56px 24px 32px;
+    position:relative;
+    z-index:1;
+  }
+  .hero-eyebrow{
+    font-family:var(--mono);
+    font-size:12px;
+    color:var(--green);
+    margin-bottom:14px;
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .hero-eyebrow .cursor{
+    width:7px;height:14px;background:var(--green);
+    animation:blink 1.1s step-end infinite;
+  }
+  @keyframes blink{50%{opacity:0;}}
+  .hero h1{
+    font-family:var(--mono);
+    font-size:clamp(26px, 4vw, 36px);
+    font-weight:700;
+    line-height:1.25;
+    color:var(--text);
+    margin-bottom:14px;
+  }
+  .hero h1 .green{color:var(--green);}
+  .hero p{
+    font-size:15px;
+    color:var(--text-dim);
+    max-width:560px;
+  }
+  .hero-stats{
+    display:flex;
+    gap:28px;
+    margin-top:28px;
+    flex-wrap:wrap;
+  }
+  .stat .num{font-family:var(--mono); font-size:22px; font-weight:700; color:var(--text);}
+  .stat .num.green{color:var(--green);}
+  .stat .label{font-size:12px; color:var(--text-faint); margin-top:2px;}
+
+  /* ===== Path ===== */
+  .path-section{
+    max-width:760px;
+    margin:0 auto;
+    padding:20px 24px 120px;
+    position:relative;
+    z-index:1;
+  }
+  .phase-block{
+    position:relative;
+    margin-bottom:8px;
+  }
+  .phase-header{
+    display:flex;
+    align-items:baseline;
+    gap:12px;
+    padding:36px 0 18px;
+    position:relative;
+  }
+  .phase-tag{
+    font-family:var(--mono);
+    font-size:11px;
+    padding:3px 8px;
+    border-radius:4px;
+    font-weight:500;
+    white-space:nowrap;
+  }
+  .phase-title{
+    font-family:var(--mono);
+    font-size:16px;
+    font-weight:700;
+    color:var(--text);
+  }
+  .phase-sub{
+    font-size:12px;
+    color:var(--text-faint);
+    margin-left:auto;
+  }
+
+  .node-list{
+    position:relative;
+    padding-left:36px;
+  }
+  .node-list::before{
+    content:'';
+    position:absolute;
+    left:11px;
+    top:0;
+    bottom:0;
+    width:2px;
+    background:var(--border);
+  }
+  .node-list .fill-line{
+    position:absolute;
+    left:11px;
+    top:0;
+    width:2px;
+    background:var(--green);
+    transition:height .3s ease;
+    height:0%;
+  }
+
+  .node{
+    position:relative;
+    margin-bottom:10px;
+    border:1px solid var(--border);
+    background:var(--surface);
+    border-radius:8px;
+    transition:border-color .15s, background .15s;
+  }
+  .node:hover{background:var(--surface-hover); border-color:#3A3F4D;}
+  .node.done{border-color:var(--green-dim);}
+  .node-dot{
+    position:absolute;
+    left:-36px;
+    top:18px;
+    width:24px;
+    height:24px;
+    border-radius:50%;
+    background:var(--bg);
+    border:2px solid var(--border);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    z-index:2;
+    transition:border-color .15s, background .15s;
+    flex-shrink:0;
+  }
+  .node-dot:hover{border-color:var(--slate);}
+  .node.done .node-dot{
+    background:var(--green);
+    border-color:var(--green);
+  }
+  .node-dot svg{width:13px;height:13px;opacity:0;transition:opacity .12s;}
+  .node.done .node-dot svg{opacity:1;}
+  .node-dot svg path{stroke:var(--bg);}
+
+  .node-main{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    padding:14px 16px;
+    cursor:pointer;
+  }
+  .node-week{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--text-faint);
+    white-space:nowrap;
+    padding-top:2px;
+    min-width:62px;
+  }
+  .node.done .node-week{color:var(--green);}
+  .node-body{flex:1; min-width:0;}
+  .node-title{
+    font-size:14px;
+    font-weight:600;
+    color:var(--text);
+    margin-bottom:3px;
+  }
+  .node.done .node-title{color:var(--text-dim); text-decoration:line-through; text-decoration-color:var(--green-dim);}
+  .node-desc{
+    font-size:13px;
+    color:var(--text-dim);
+    line-height:1.5;
+  }
+  .node-chevron{
+    color:var(--text-faint);
+    flex-shrink:0;
+    padding-top:2px;
+    transition:transform .15s;
+  }
+  .node.open .node-chevron{transform:rotate(90deg);}
+
+  .node-detail{
+    display:none;
+    padding:0 16px 16px 16px;
+    border-top:1px solid var(--border);
+    margin-top:0;
+  }
+  .node.open .node-detail{display:block; padding-top:12px;}
+  .node-detail .block-label{
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--amber);
+    margin-bottom:6px;
+    margin-top:16px;
+    display:flex;
+    align-items:center;
+    gap:6px;
+  }
+  .node-detail .block-label:first-child{margin-top:0;}
+  .node-detail .block-label.green{color:var(--green);}
+  .node-detail .context-text{
+    font-size:13px;
+    color:var(--text-dim);
+    line-height:1.6;
+  }
+  .node-detail .req-list{
+    list-style:none;
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+  }
+  .node-detail .req-list li{
+    font-size:13px;
+    color:var(--text-dim);
+    padding-left:18px;
+    position:relative;
+    line-height:1.55;
+  }
+  .node-detail .req-list li::before{
+    content:'›';
+    position:absolute;
+    left:0;
+    color:var(--green);
+    font-weight:700;
+  }
+  .node-detail .stage-group{
+    margin-bottom:14px;
+  }
+  .node-detail .stage-group:last-child{margin-bottom:0;}
+  .node-detail .stage-label{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    font-family:var(--mono);
+    font-size:11px;
+    font-weight:700;
+    margin-bottom:8px;
+  }
+  .node-detail .stage-num{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:18px;
+    height:18px;
+    border-radius:50%;
+    font-size:10px;
+    flex-shrink:0;
+  }
+  .node-detail .stage-group.drill .stage-label{color:var(--text-faint);}
+  .node-detail .stage-group.drill .stage-num{background:var(--surface-hover); border:1px solid var(--border); color:var(--text-faint);}
+  .node-detail .stage-group.easy .stage-label{color:#7AA2F7;}
+  .node-detail .stage-group.easy .stage-num{background:rgba(122,162,247,0.12); border:1px solid rgba(122,162,247,0.35); color:#7AA2F7;}
+  .node-detail .stage-group.mid .stage-label{color:var(--text-dim);}
+  .node-detail .stage-group.mid .stage-num{background:var(--surface-hover); border:1px solid var(--slate); color:var(--text-dim);}
+  .node-detail .stage-group.mini .stage-label{color:var(--amber);}
+  .node-detail .stage-group.mini .stage-num{background:rgba(232,163,61,0.12); border:1px solid var(--amber-dim); color:var(--amber);}
+  .node-detail .stage-group.capstone .stage-label{color:var(--green);}
+  .node-detail .stage-group.capstone .stage-num{background:rgba(95,216,154,0.12); border:1px solid var(--green-dim); color:var(--green);}
+  .node-detail .stage-group .req-list{
+    padding-left:4px;
+    border-left:1px solid var(--border);
+    margin-left:9px;
+    padding-left:17px;
+  }
+  .node-detail .stage-output{
+    font-family:var(--mono);
+    font-size:11.5px;
+    color:var(--text-faint);
+    margin-left:26px;
+    margin-bottom:6px;
+    margin-top:-4px;
+  }
+  .node-detail .stage-output b{
+    color:var(--text-dim);
+    font-weight:600;
+  }
+  .node-detail .stage-uses{
+    margin-left:26px;
+    margin-bottom:10px;
+    display:flex;
+    flex-wrap:wrap;
+    gap:5px;
+    align-items:center;
+  }
+  .node-detail .uses-label{
+    font-family:var(--mono);
+    font-size:10px;
+    color:var(--text-faint);
+    margin-right:2px;
+  }
+  .node-detail .use-pill{
+    font-family:var(--mono);
+    font-size:11px;
+    padding:2px 7px;
+    border-radius:4px;
+    background:rgba(122,162,247,0.08);
+    border:1px solid rgba(122,162,247,0.2);
+    color:#7AA2F7;
+  }
+  .node-detail .stage-group.drill .use-pill{
+    background:rgba(91,98,114,0.15);
+    border-color:rgba(91,98,114,0.35);
+    color:var(--text-dim);
+  }
+  .node-detail .stage-group.easy .use-pill{
+    background:rgba(122,162,247,0.08);
+    border-color:rgba(122,162,247,0.25);
+    color:#7AA2F7;
+  }
+  .node-detail .stage-group.mid .use-pill{
+    background:rgba(107,114,128,0.12);
+    border-color:rgba(107,114,128,0.3);
+    color:var(--text-dim);
+  }
+  .node-detail .stage-group.mini .use-pill{
+    background:rgba(232,163,61,0.08);
+    border-color:var(--amber-dim);
+    color:var(--amber);
+  }
+  .node-detail .stage-group.capstone .use-pill{
+    background:rgba(95,216,154,0.08);
+    border-color:var(--green-dim);
+    color:var(--green);
+  }
+  .node-detail .stage-check-row{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    margin-left:26px;
+    margin-top:10px;
+    margin-bottom:4px;
+  }
+  .node-detail .stage-check-btn{
+    display:flex;
+    align-items:center;
+    gap:6px;
+    background:none;
+    border:1px solid var(--border);
+    border-radius:5px;
+    padding:5px 10px;
+    cursor:pointer;
+    font-family:var(--mono);
+    font-size:11px;
+    color:var(--text-faint);
+    transition:border-color .15s, color .15s, background .15s;
+  }
+  .node-detail .stage-check-btn:hover{border-color:var(--slate); color:var(--text-dim);}
+  .node-detail .stage-check-btn.checked{
+    border-color:var(--green-dim);
+    background:rgba(95,216,154,0.07);
+    color:var(--green);
+  }
+  .node-detail .stage-check-icon{
+    width:13px;height:13px;
+    border:1.5px solid currentColor;
+    border-radius:3px;
+    display:flex;align-items:center;justify-content:center;
+    flex-shrink:0;
+  }
+  .node-detail .stage-check-btn.checked .stage-check-icon::after{
+    content:'✓';
+    font-size:9px;
+    line-height:1;
+  }
+  .node-detail .stage-done-label{
+    font-family:var(--mono);
+    font-size:10px;
+    color:var(--green);
+    display:none;
+  }
+  .node-detail .stage-check-btn.checked + .stage-done-label{display:block;}
+  .node-detail .ac-list{
+    list-style:none;
+    display:flex;
+    flex-direction:column;
+    gap:7px;
+  }
+  .node-detail .ac-list li{
+    font-size:13px;
+    color:var(--text-dim);
+    padding-left:24px;
+    position:relative;
+    line-height:1.55;
+    font-family:var(--mono);
+    font-size:12.5px;
+  }
+  .node-detail .ac-list li::before{
+    content:'[ ]';
+    position:absolute;
+    left:0;
+    color:var(--amber);
+  }
+  .node-detail .ac-list li{
+    padding-left:28px;
+  }
+  .node-detail .example-box{
+    background:#0F1115;
+    border:1px solid var(--border);
+    border-radius:6px;
+    overflow:hidden;
+  }
+  .node-detail .example-row{
+    display:flex;
+    align-items:flex-start;
+    gap:10px;
+    padding:9px 12px;
+    font-family:var(--mono);
+    font-size:12.5px;
+    line-height:1.6;
+  }
+  .node-detail .example-row + .example-row{
+    border-top:1px solid var(--border);
+  }
+  .node-detail .example-tag{
+    flex-shrink:0;
+    min-width:54px;
+    font-weight:700;
+  }
+  .node-detail .example-row.in .example-tag{color:var(--amber);}
+  .node-detail .example-row.out .example-tag{color:var(--green);}
+  .node-detail .example-val{
+    color:#C9D1D9;
+    word-break:break-word;
+  }
+  .node-detail .example-note{
+    font-family:var(--sans);
+    font-size:12px;
+    color:var(--text-faint);
+    padding:8px 12px;
+    border-top:1px solid var(--border);
+    font-style:italic;
+  }
+  .node-detail .output-spec{
+    font-size:13px;
+    color:var(--text);
+    font-weight:600;
+    background:rgba(95,216,154,0.06);
+    border:1px solid var(--green-dim);
+    border-radius:6px;
+    padding:10px 12px;
+    line-height:1.5;
+  }
+  .node-detail .res-list{
+    display:flex;
+    flex-direction:column;
+    gap:5px;
+  }
+  .node-detail .res-list a{
+    font-size:13px;
+    color:#79C0FF;
+    text-decoration:none;
+    border-bottom:1px solid transparent;
+  }
+  .node-detail .res-list a:hover{border-bottom-color:#79C0FF;}
+  .node-detail .res-list a::before{
+    content:'↗ ';
+    color:var(--text-faint);
+  }
+
+  .phase-tag.blue{background:rgba(95,216,154,0.1); color:var(--green); border:1px solid var(--green-dim);}
+  .phase-tag.amber{background:rgba(232,163,61,0.1); color:var(--amber); border:1px solid var(--amber-dim);}
+
+  footer{
+    max-width:760px;
+    margin:0 auto;
+    padding:0 24px 60px;
+    text-align:center;
+    color:var(--text-faint);
+    font-family:var(--mono);
+    font-size:12px;
+    position:relative;
+    z-index:1;
+  }
+
+  @media (max-width:600px){
+    .hero{padding:40px 18px 24px;}
+    .path-section{padding:16px 18px 100px;}
+    .header-inner{padding:14px 16px;}
+    .progress-wrap{margin-left:12px;}
+    .node-list{padding-left:30px;}
+    .node-list::before, .node-list .fill-line{left:9px;}
+    .node-dot{left:-30px; width:20px; height:20px; top:16px;}
+    .node-week{min-width:0; font-size:10px;}
+    .node-main{padding:12px 12px; gap:8px;}
+    .phase-sub{display:none;}
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto;}
+    *{transition:none !important; animation:none !important;}
+  }
+
+  .sr-only{
+    position:absolute;
+    width:1px;height:1px;
+    overflow:hidden;
+    clip:rect(0,0,0,0);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="brand"><span class="dim">~/</span><span class="accent">swe-path</span><span class="dim">.py</span></div>
+    <div class="progress-wrap">
+      <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+      <div class="progress-pct" id="progressPct">0%</div>
+    </div>
+    <button class="reset-btn" id="resetBtn">reset</button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-eyebrow"><span class="cursor"></span> fresh_grad@2026:~$ ./become_swe.sh</div>
+  <h1>beginner <span class="green">→</span> backend <span class="green">→</span> infra-ready</h1>
+  <p>A 52-week python path, broken into commits you can actually check off. Click any node to expand it, click the dot to mark it done. Your progress saves automatically on this device.</p>
+  <div class="hero-stats">
+    <div class="stat"><div class="num" id="statDone">0</div><div class="label">projects done</div></div>
+    <div class="stat"><div class="num">170</div><div class="label">total projects</div></div>
+    <div class="stat"><div class="num green" id="statPhase">1 / 5</div><div class="label">current phase</div></div>
+  </div>
+</section>
+
+<section class="path-section" id="pathSection"></section>
+
+<footer>// keep shipping — git commit -m "another week done"</footer>
+
+<script>
+const CHECK_SVG = `<svg viewBox="0 0 16 16" fill="none"><path d="M3 8.5L6 11.5L13 4.5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+
+// Each node, RFC-style: w(week), t(title), d(short desc),
+// context (why this matters / what you're solving),
+// requirements[] (what the thing must do),
+// acceptance[] (how you know it's actually done),
+// output (one-line deliverable name),
+// links[] {label,url} (free resources to learn the concept, NOT solutions)
+const DATA = [
+{
+  id:'p1', tag:'phase 01', title:'python foundations', sub:'weeks 1\u20138', color:'blue',
+  nodes:[
+    {w:'wk 1', t:'syntax, variables, I/O', d:'Variables, types, operators, input/output, set up VS Code + Python.',
+     output:'BMI & unit converter CLI',
+     context:'Every program starts with getting data in and showing results out. This week is about making a script that talks to a human through the terminal \u2014 no shortcuts, no GUI.',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 single converter', output:'Celsius-to-Fahrenheit converter', uses:['variables', 'input()', 'print()', 'f-strings', 'arithmetic operators'],
+       items:[
+         'Build a script that converts Celsius to Fahrenheit only \u2014 one input, one formula, one printed result',
+         'Output should look like "25.0\u00b0C is 77.0\u00b0F", not a bare number'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 two-way converter', output:'Two-direction temperature converter', uses:['input()', 'if/elif/else', 'int()/float()', 'f-strings'],
+       items:[
+         'Extend it so the user can choose the direction: C\u2192F or F\u2192C',
+         'Use a menu choice (e.g. typing "1" or "2") to pick which conversion runs'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 multi-unit converter', output:'Multi-unit converter (temp/length/weight)', uses:['if/elif/else', 'while loop', 'input()', 'multiple functions'],
+       items:[
+         'Add at least 3 conversion types total: temperature, length (km/miles), and weight (kg/lbs)',
+         'Show a menu listing all available conversions and let the user pick one'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 converter with validation & loop', output:'Looping converter with input validation', uses:['while True loop', 'try/except', 'break', 'if/elif/else'],
+       items:[
+         'Wrap the whole program in a loop so the user can do multiple conversions without restarting',
+         'Add input validation so typing letters instead of numbers shows a friendly message, not a crash',
+         'Add a "quit" option that exits the loop cleanly'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 BMI & unit converter CLI', output:'BMI & unit converter CLI', uses:['functions', 'input()', 'if/elif/else', 'while loop', 'try/except', 'f-strings'],
+       items:[
+         'Program runs from the terminal (not just an IDE "play" button)',
+         'Accepts numeric input from the user (weight, height, or a temperature value)',
+         'Performs at least one calculation using that input',
+         'Displays a clearly formatted result back to the user',
+         'Handles at least 2 different "modes" or conversions in one script (e.g. BMI + temperature)',
+         'Combines everything from Projects 1-4: menu, loop, multiple modes, input validation'
+       ]},
+     ],
+     example:{
+       input:'weight = 70, height = 1.75',
+       output:'Your BMI is 22.9 (Normal)',
+       note:'Try it with weight = 95, height = 1.70 \u2014 your program should classify that as Overweight.'
+     },
+     acceptance:[
+       'Running the script twice with different inputs gives different correct outputs',
+       'Output includes units or labels, not just a bare number',
+       'No crash when a normal numeric value is entered',
+       'Code uses variables with meaningful names, not x, y, z'
+     ],
+     links:[
+       {label:'Python.org official installer', url:'https://www.python.org/downloads/'},
+       {label:'freeCodeCamp \u2014 Python for Beginners (full course)', url:'https://www.youtube.com/watch?v=rfscVS0vtbw'},
+       {label:'Real Python \u2014 Variables in Python', url:'https://realpython.com/python-variables/'}
+     ]},
+    {w:'wk 2', t:'control flow', d:'Conditionals, for/while loops, string methods.',
+     output:'Number-guessing game with hints',
+     context:'Branching logic and loops are the backbone of almost every program. The guessing game is a small but real test: can your program react differently depending on state, and keep running until a condition is met?',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 odd/even checker', uses:['if/elif/else', 'comparison operators', 'print()'],
+       items:[
+         'Ask the user for a number and print whether it\u2019s odd or even',
+         'That\u2019s it \u2014 one input, one if/else, one printed result'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 single-round guess', uses:['random.randint()', 'input()', 'if/elif/else', 'int()'],
+       items:[
+         'Pick one random number, let the user guess exactly once, print "correct" or "wrong, it was X"',
+         'No loop yet \u2014 just one shot'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 guess with hints', uses:['while loop', 'if/elif/else', 'f-strings', 'counter variable'],
+       items:[
+         'Add a loop so the user can keep guessing',
+         'Add "higher" / "lower" hints after each wrong guess, no attempt limit yet'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 FizzBuzz + limited guesses', uses:['for loop', 'range()', 'if/elif/else', '% operator'],
+       items:[
+         'Build classic FizzBuzz (1-100) as a separate small script',
+         'Add a max-attempt limit to your guessing game from Project 3, ending the game if exceeded'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 full number-guessing game', uses:['random.randint()', 'while loop', 'if/elif/else', 'f-strings'],
+       items:[
+         'Program picks a random target number in a fixed range',
+         'User can guess repeatedly until correct or until a max attempt count is reached',
+         'Program tells the user if their guess was too high or too low',
+         'Program ends cleanly with a win message or a "ran out of tries" message',
+         'Bonus: build a separate password-strength checker using string methods'
+       ]},
+     ],
+     example:{
+       input:'secret = 42, guesses: 70, 30, 42',
+       output:'"Lower!" \u2192 "Higher!" \u2192 "Correct! You used 3 tries."',
+       note:'Each guess should narrow things down with an accurate hint until the win message appears.'
+     },
+     acceptance:[
+       'Game never lets the player guess more than the defined max attempts',
+       'Correct guess ends the game immediately with a clear message',
+       'Hints (higher/lower) are always accurate relative to the target',
+       'Running the program multiple times produces different target numbers'
+     ],
+     links:[
+       {label:'Real Python \u2014 for/while loops', url:'https://realpython.com/python-for-loop/'},
+       {label:'W3Schools \u2014 String Methods reference', url:'https://www.w3schools.com/python/python_ref_string.asp'}
+     ]},
+    {w:'wk 3', t:'data structures', d:'Lists, tuples, dicts, sets \u2014 and when to use which.',
+     output:'In-memory contact book',
+     context:'Real data rarely comes as single values \u2014 it comes as collections. This is your first exercise in choosing the right structure: a dict for lookups by key, a list for ordered collections, a set for uniqueness.',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 shopping list', uses:['list', '.append()', '.remove()', 'sorted()', 'slicing [:]'],
+       items:[
+         'Build a list, add 5 items to it, print them one per line',
+         'Remove one item and print the updated list'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 simple lookup table', uses:['dict', 'dict.get()', 'for loop', '.items()'],
+       items:[
+         'Build a dict mapping 5 names to ages, then look up and print one person\u2019s age by name',
+         'Print "not found" if the name doesn\u2019t exist'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 unique-words finder', uses:['set()', 'list', 'for loop', 'if in'],
+       items:[
+         'Given a hardcoded list of words with duplicates, use a set to print only the unique ones',
+         'Print how many duplicates were removed'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 simple word counter', uses:['while loop', 'input()', 'break', '.lower()', '.strip()'],
+       items:[
+         'Take a paragraph of text and build a dict counting how many times each word appears',
+         'Print the 3 most frequent words using sorting'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 contact book', uses:['dict', 'functions', 'for loop', '.items()', 'sorted()'],
+       items:[
+         'Store multiple contacts, each with at least a name, phone, and email',
+         'Support adding a new contact',
+         'Support searching for a contact by name',
+         'Support deleting a contact',
+         'Support listing all contacts sorted alphabetically by name'
+       ]},
+     ],
+     example:{
+       input:'add_contact("Ana", "0917...", "ana@email.com") then find_contact("Ana")',
+       output:'{"phone": "0917...", "email": "ana@email.com"}',
+       note:'find_contact("Bob") on a contact that was never added should return a clear "not found", not crash.'
+     },
+     acceptance:[
+       'Searching for a name that doesn\u2019t exist returns a clear "not found" result, not a crash',
+       'Adding a contact with the same name as an existing one is handled intentionally (overwrite or reject \u2014 your choice, but it must be deliberate)',
+       'Listing contacts always returns them in alphabetical order regardless of insertion order',
+       'You can explain out loud why you picked dict vs list for the main storage'
+     ],
+     links:[
+       {label:'Real Python \u2014 Dictionaries', url:'https://realpython.com/python-dicts/'},
+       {label:'Python docs \u2014 Data Structures', url:'https://docs.python.org/3/tutorial/datastructures.html'}
+     ]},
+    {w:'wk 4', t:'functions', d:'Functions, scope, *args/**kwargs, default params.',
+     output:'Refactored week 1\u20133 projects, function-based',
+     context:'Code that isn\u2019t broken into functions doesn\u2019t scale and can\u2019t be tested. This week\u2019s job is to take what already works and make it reusable and readable.',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 single-purpose function', uses:['def', 'return', 'parameters', 'calling functions'],
+       items:[
+         'Write one function add(a, b) that returns a sum',
+         'Call it 3 times with different numbers and print each result'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 function with a default', uses:['def', 'default parameters', 'f-strings'],
+       items:[
+         'Write greet(name, greeting="Hello") and call it both with and without the second argument',
+         'Write a price calculator function with an optional discount param defaulting to 0'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 flexible-argument tool', uses:['*args', '**kwargs', 'def', 'return'],
+       items:[
+         'Write sum_all(*numbers) that adds any number of arguments',
+         'Write build_profile(**details) that returns a formatted string from any keyword arguments passed'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 calculator module', uses:['def', 'if/elif/else', 'try/except', 'return'],
+       items:[
+         'Write 4 functions: add, subtract, multiply, divide, each handling bad input (e.g. divide by zero) gracefully',
+         'Write one dispatcher function that takes an operator string and calls the right one'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 refactor weeks 1\u20133', uses:['def', '*args', '**kwargs', 'default params', 'return', 'docstrings'],
+       items:[
+         'Every previous project (BMI tool, guessing game, contact book) is broken into named functions, no top-level logic spaghetti',
+         'At least one function uses a default parameter value',
+         'At least one function accepts a variable number of arguments (*args)',
+         'At least one function accepts keyword arguments (**kwargs)',
+         'Each function does ONE clear thing (if you struggle to name it simply, it\u2019s doing too much)'
+       ]},
+     ],
+     example:{
+       input:'sum_all(1, 2, 3, 4)',
+       output:'10',
+       note:'A *args-based function should handle any number of arguments \u2014 sum_all(5) and sum_all() (returning 0) should both work too.'
+     },
+     acceptance:[
+       'Calling any function twice with the same input always gives the same output (no hidden state surprises)',
+       'No function is longer than ~20 lines \u2014 if it is, it should probably be split',
+       'You can call any function on its own, separately, and it works without running the whole script',
+       'Functions have docstrings or comments explaining what they take in and return'
+     ],
+     links:[
+       {label:'Real Python \u2014 Defining Functions', url:'https://realpython.com/defining-your-own-python-function/'},
+       {label:'Real Python \u2014 *args and **kwargs', url:'https://realpython.com/python-kwargs-and-args/'}
+     ]},
+    {w:'wk 5', t:'files & errors', d:'File I/O, with statements, try/except.',
+     output:'CSV-based expense tracker',
+     context:'Programs that forget everything when closed aren\u2019t useful. This is your first taste of persistence \u2014 and of handling the real world, where input is messy and files go missing.',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 simple file writer', uses:['open()', 'with statement', 'write mode (w)', 'f.write()'],
+       items:[
+         'Write a script that writes 3 lines of text to a file',
+         'Open the file afterward to confirm the content is there'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 simple file reader', uses:['open()', 'with statement', 'read mode (r)', 'for line in f'],
+       items:[
+         'Read a text file line by line and print only lines containing a specific word',
+         'Print the total number of lines in the file'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 safe number input', uses:['try/except', 'ValueError', 'while loop', 'input()'],
+       items:[
+         'Write a script that asks for a number and handles invalid input gracefully using try/except',
+         'Make it keep asking until a valid number is entered'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 simple logger', uses:['open() append mode (a)', 'datetime module', 'try/except'],
+       items:[
+         'Write a function log_message(text) that appends a timestamped line to a log file',
+         'Handle the case where the log file doesn\u2019t exist yet by creating it automatically'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 expense tracker', uses:['csv module', 'open()', 'with statement', 'try/except', 'FileNotFoundError'],
+       items:[
+         'User can add an expense (date, category, amount) and it gets saved to a file',
+         'User can view total spending, calculated by reading from the saved file',
+         'Invalid amount input (e.g. text instead of a number) does not crash the program',
+         'Missing file on first run is handled gracefully, not treated as an error',
+         'Data survives closing and reopening the program'
+       ]},
+     ],
+     example:{
+       input:'add_expense("food", 250) then add_expense("transport", 80) then total_spent()',
+       output:'330',
+       note:'Closing the program and calling total_spent() again later should still return 330, read fresh from the file.'
+     },
+     acceptance:[
+       'Closing and reopening the program still shows previously added expenses',
+       'Entering "abc" as an amount produces a friendly error message, not a traceback',
+       'Deleting the data file and rerunning the program does not crash it',
+       'Total spending calculation is always correct after adding multiple entries'
+     ],
+     links:[
+       {label:'Real Python \u2014 Reading and Writing Files', url:'https://realpython.com/read-write-files-python/'},
+       {label:'Python docs \u2014 csv module', url:'https://docs.python.org/3/library/csv.html'}
+     ]},
+    {w:'wk 6', t:'OOP basics', d:'Classes, __init__, methods, inheritance.',
+     output:'Class-based expense tracker',
+     context:'Objects let you bundle data and behavior together. This is the shift from "a script that does things" to "a system made of things that know how to do things."',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 single class', uses:['class', '__init__', 'self', 'attributes', 'methods'],
+       items:[
+         'Create a Dog class with name and breed attributes, and a bark() method that prints something',
+         'Create one Dog instance and call its method'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 multiple instances + methods', uses:['class', 'self', 'instance methods', 'attribute assignment'],
+       items:[
+         'Create 2 different Dog instances and print their attributes separately',
+         'Add a method that changes one of the Dog\u2019s own attributes (e.g. have_birthday() increases age)'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 bank account class', uses:['class', 'inheritance', 'super()', 'override method'],
+       items:[
+         'Create a BankAccount class with a balance, and deposit()/withdraw() methods',
+         'Make withdraw() reject the action if it would make the balance negative'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 shape calculator with inheritance', uses:['class', 'inheritance', 'polymorphism', 'list of objects'],
+       items:[
+         'Build a Shape base class and Circle/Rectangle subclasses, each with an area() method',
+         'Loop through a list of mixed shape objects and print each one\u2019s area correctly'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 class-based expense tracker', uses:['class', '__init__', '__str__', 'inheritance', 'list', 'for loop'],
+       items:[
+         'An Expense "thing" exists as its own object with its own data (category, amount, date)',
+         'A Tracker "thing" exists that manages a collection of expenses',
+         'The tracker supports adding expenses, totaling them, and filtering by category',
+         'At least one subclass exists that extends the base Expense with an extra property (e.g. a recurring expense with a frequency)',
+         'Printing an expense shows a clean, readable line \u2014 not a raw object reference'
+       ]},
+     ],
+     example:{
+       input:'tracker.add_expense(Expense("food", 250, "2026-06-01")); print(tracker.total())',
+       output:'250',
+       note:'tracker.filter_by_category("transport") on a tracker with no transport expenses should return an empty list, not None or an error.'
+     },
+     acceptance:[
+       'Creating two separate Tracker objects keeps their data completely independent of each other',
+       'Filtering by a category that has no matches returns an empty result, not an error',
+       'The subclass behaves correctly wherever the base class is expected (you can swap one in for the other)',
+       'You can explain, without checking notes, the difference between a class and an instance'
+     ],
+     links:[
+       {label:'Real Python \u2014 OOP in Python 3', url:'https://realpython.com/python3-object-oriented-programming/'},
+       {label:'Corey Schafer \u2014 Python OOP Tutorial (video)', url:'https://www.youtube.com/watch?v=ZDa-Z5JzLYM'}
+     ]},
+    {w:'wk 7', t:'modules & venv', d:'Modules, packages, virtual environments, pip.',
+     output:'Multi-file project + isolated environment',
+     context:'Real projects are never one file, and real projects never install packages globally onto your whole machine. This week is about professional project hygiene.',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 first venv', uses:['python -m venv', 'source venv/bin/activate', 'pip install'],
+       items:[
+         'Create a virtual environment, activate it, and confirm your terminal shows it\u2019s active',
+         'Deactivate it and confirm the prompt changes back'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 install & use a package', uses:['pip install', 'import packagename', 'use package API'],
+       items:[
+         'Install one small package (e.g. "colorama") inside your venv and import it in a test script',
+         'Use it to print colored text to the terminal'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 your own helper module', uses:['import', 'from module import', 'def in separate file'],
+       items:[
+         'Create a helpers.py file with 2 small functions, then import and use them from another file',
+         'Practice "from helpers import specific_function" vs "import helpers"'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 reusable utils package', uses:['pip install', 'import', 'pip freeze', 'requirements.txt'],
+       items:[
+         'Organize 2-3 related files into a folder with an __init__.py, making it an importable package',
+         'Build a small "utils" package with separate modules for math helpers and string helpers'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 multi-file project + isolated env', uses:['venv', 'pip', 'import', 'from package import', 'requirements.txt'],
+       items:[
+         'Previous tracker project is split across at least 3 files with a clear responsibility each (e.g. data models, logic, entry point)',
+         'A virtual environment exists for the project, isolated from your system Python',
+         'At least one third-party package is installed inside that environment and actually used',
+         'A requirements file exists listing exact installed packages',
+         'The whole project can run from a fresh clone using only the requirements file to set up dependencies'
+       ]},
+     ],
+     example:{
+       input:'pip freeze > requirements.txt, then on a fresh machine: pip install -r requirements.txt',
+       output:'Exact same package versions installed, project runs identically',
+       note:'If a teammate runs your project and gets a different result than you, your requirements file is incomplete or your code depends on something outside it.'
+     },
+     acceptance:[
+       'Deactivating the virtual environment and trying to run the project fails (proving it truly depends on the env, not your global Python)',
+       'A teammate (or you, on a different machine) could set this up using only your instructions',
+       'No file does more than one job \u2014 you could describe what each file is for in one sentence',
+       'Imports between your own files work correctly without path hacks'
+     ],
+     links:[
+       {label:'Real Python \u2014 Virtual Environments Primer', url:'https://realpython.com/python-virtual-environments-a-primer/'},
+       {label:'Real Python \u2014 Python Modules and Packages', url:'https://realpython.com/python-modules-packages/'}
+     ]},
+    {w:'wk 8', t:'comprehensions & review', d:'List/dict comprehensions, lambda, map/filter.',
+     output:'Library system CLI',
+     context:'This is a checkpoint, not a new topic. The library system forces you to combine everything from weeks 1\u20137 \u2014 OOP, files, functions, collections \u2014 into one coherent, slightly bigger system.',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 comprehension rewrite', uses:['list comprehension [x for x in]', 'filter condition in comprehension'],
+       items:[
+         'Take a for-loop that squares numbers in a list and rewrite it as a one-line list comprehension',
+         'Confirm both versions produce identical output'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 filtering tool', uses:['list comprehension with if', 'filter()', 'lambda'],
+       items:[
+         'Write a comprehension that filters a list to only even numbers',
+         'Write a separate one that filters a list of names to only those longer than 5 characters'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 map/filter practice', uses:['map()', 'filter()', 'list()', 'lambda'],
+       items:[
+         'Use map() to convert a list of strings to a list of integers',
+         'Use filter() to get only names longer than 5 characters from a list'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 inventory summary tool', uses:['list comprehension', 'dict comprehension {k:v}', 'filter()', 'map()'],
+       items:[
+         'Given a list of product dicts, use a comprehension to build a {name: price} summary',
+         'Use filter() + map() together to print formatted names of only in-stock items'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 library system CLI', uses:['class', 'list comprehension', 'dict comprehension', 'filter()', 'map()', 'lambda'],
+       items:[
+         'Books exist as objects with a title and an availability status',
+         'A Library object manages a collection of books: borrow, return, add new books',
+         'At least one feature uses a comprehension instead of a manual loop (e.g. listing only available titles)',
+         'At least one feature uses map() or filter() instead of a manual loop',
+         'The whole system can be run start to finish without errors on a typical flow (add \u2192 borrow \u2192 return \u2192 list)'
+       ]},
+     ],
+     example:{
+       input:'library.borrow_book("Dune") then library.borrow_book("Dune") again',
+       output:'First call succeeds; second call returns "Already borrowed", not an error',
+       note:'available_titles() right after the first borrow should no longer include "Dune".'
+     },
+     acceptance:[
+       'Borrowing an already-borrowed book is rejected with a clear message, not silently allowed',
+       'Returning a book makes it immediately available to borrow again',
+       'Listing available books never includes a currently-borrowed one',
+       'You rebuilt this without copying directly from any earlier project file \u2014 typed from understanding'
+     ],
+     links:[
+       {label:'Real Python \u2014 List Comprehensions', url:'https://realpython.com/list-comprehension-python/'},
+       {label:'Python docs \u2014 lambda expressions', url:'https://docs.python.org/3/reference/expressions.html#lambda'}
+     ]},
+  ]
+},
+{
+  id:'p2', tag:'phase 02', title:'real backend skills', sub:'weeks 9\u201320', color:'blue',
+  nodes:[
+    {w:'wk 9-10', t:'git & github', d:'Commit, branch, push, .gitignore \u2014 now, not later.',
+     output:'All past projects on GitHub',
+     context:'Code that only lives on your machine doesn\u2019t exist professionally. Version control is non-negotiable infrastructure for every engineer, and it starts now so it becomes a habit, not an afterthought.',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 first repo', uses:['git init', 'git add', 'git commit -m', 'git log'],
+       items:[
+         'Install git, configure your name/email, run git init in a test folder',
+         'Make one file, add it, commit it, and view it with git log'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 ignore and push', uses:['.gitignore', 'git rm --cached', 'git status'],
+       items:[
+         'Create a .gitignore excluding venv/ and __pycache__/, confirm those folders stop showing in git status',
+         'Create a GitHub repo and push this test project to it'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 incremental commit history', uses:['git add -p', 'git commit -m', 'multiple commits'],
+       items:[
+         'Take one old project and commit it in at least 4 separate, meaningful commits (not one dump)',
+         'Push it to its own new GitHub repo'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 one clean repo with README', uses:['git push', 'README.md', 'markdown', 'git log'],
+       items:[
+         'Take your smallest old project and push it with a proper .gitignore and incremental commits',
+         'Write a basic README with a title, description, and how-to-run section'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 all projects on GitHub', uses:['git', '.gitignore', 'README.md', 'git tag', 'git push --tags'],
+       items:[
+         'Every past project lives in its own git repository, pushed to GitHub',
+         'Each repo has a .gitignore excluding virtual environments and cache files',
+         'Commit history shows multiple meaningful commits per project, not one giant "final" commit',
+         'Each repo has a README explaining what the project does and how to run it'
+       ]},
+     ],
+     example:{
+       input:'git clone https://github.com/you/expense-tracker.git (on a different machine)',
+       output:'Project runs successfully following only the README steps',
+       note:'If you have to message yourself extra setup instructions that aren\u2019t in the README, the README isn\u2019t done yet.'
+     },
+     acceptance:[
+       'Cloning any of your repos fresh, on its own, gives someone enough info (from the README) to run it',
+       'git log shows a believable history of incremental progress, not a single dump',
+       'No virtual environment folders or cache files are tracked in git',
+       'Repos are public and visible on your GitHub profile'
+     ],
+     links:[
+       {label:'GitHub \u2014 Git Handbook', url:'https://docs.github.com/en/get-started/using-git/about-git'},
+       {label:'gitignore.io \u2014 generate .gitignore', url:'https://www.toptal.com/developers/gitignore'}
+     ]},
+    {w:'wk 11-12', t:'SQL fundamentals', d:'SELECT, JOIN, WHERE, schema design using SQLite.',
+     output:'Designed schema for a to-do app',
+     context:'Almost every backend system is, underneath, a thin layer on top of a database. Before writing any API, you need to think clearly about how data relates to other data.',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 single-table queries', uses:['CREATE TABLE', 'INSERT INTO', 'SELECT WHERE', 'LIKE'],
+       items:[
+         'Create a single table and insert 5 rows manually using INSERT statements',
+         'Write 3 simple SELECT queries with WHERE on different conditions'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 sorted & limited results', uses:['ORDER BY', 'LIMIT', 'GROUP BY', 'COUNT(*)'],
+       items:[
+         'Write a query that returns the 3 most recent rows using ORDER BY and LIMIT',
+         'Write a query using GROUP BY to count rows per category'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 two-table join', uses:['INNER JOIN ON', 'LEFT JOIN', 'foreign key'],
+       items:[
+         'Create two related tables and write a basic INNER JOIN between them',
+         'Try a LEFT JOIN and compare the result to the INNER JOIN version'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 mini blog schema', uses:['CREATE TABLE', 'FOREIGN KEY REFERENCES', 'JOIN', 'ORDER BY'],
+       items:[
+         'Design tables for authors and posts with a foreign key relationship',
+         'Write a query listing all posts along with their author\u2019s name, sorted by newest first'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 to-do app schema', uses:['CREATE TABLE', 'INSERT', 'SELECT', 'JOIN', 'WHERE', 'ORDER BY', 'LIMIT'],
+       items:[
+         'A users table and a tasks table exist, related by a foreign key',
+         'Schema enforces that a task always belongs to exactly one user',
+         'You can retrieve all tasks belonging to a specific user using a JOIN',
+         'You can filter, sort, and limit results using WHERE, ORDER BY, and LIMIT',
+         'Schema and at least 10 practice queries are documented somewhere (a .sql file or notes)'
+       ]},
+     ],
+     example:{
+       input:'SELECT tasks.title, users.name FROM tasks JOIN users ON tasks.user_id = users.id WHERE tasks.done = 0;',
+       output:'rows like ("Buy groceries", "Ana") for every incomplete task with its owner\u2019s name',
+       note:'Run this against a user with zero tasks too \u2014 it should return nothing for that user, not an error.'
+     },
+     acceptance:[
+       'Querying for a user with no tasks returns an empty result, not an error',
+       'A JOIN query correctly shows the task title alongside the owning user\u2019s name',
+       'You can explain why a foreign key matters here without notes',
+       'Schema has no duplicate or redundant columns storing the same fact twice'
+     ],
+     links:[
+       {label:'SQLBolt \u2014 free interactive SQL lessons', url:'https://sqlbolt.com/'},
+       {label:'DB Browser for SQLite (free tool)', url:'https://sqlitebrowser.org/'}
+     ]},
+    {w:'wk 13-15', t:'FastAPI basics', d:'Routes, request/response models (Pydantic), params.',
+     output:'REST API for the to-do app',
+     context:'This is where "I write Python scripts" becomes "I build services other programs can talk to." A REST API exposing CRUD operations is the most common building block in backend engineering.',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 hello world API', uses:['FastAPI()', '@app.get(/)', 'uvicorn main:app', '/docs'],
+       items:[
+         'Install fastapi and uvicorn, create a single GET / route returning a message',
+         'Run it and view the interactive docs at /docs in your browser'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 greeting API', uses:['@app.get(/{name})', 'path params', 'query params', 'Optional[]'],
+       items:[
+         'Build a GET /greet/{name} route that returns a personalized greeting',
+         'Add an optional query parameter (e.g. ?loud=true) that changes the response'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 validated notes API', uses:['@app.get', '@app.post', 'HTTPException', 'status_code=404'],
+       items:[
+         'Define a Pydantic model for a simple "Note" (title, content) and accept it in a POST request',
+         'Try sending invalid data (missing field) and observe FastAPI\u2019s automatic validation error'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 notes API with lookup', uses:['@app.get', '@app.post', 'HTTPException', 'status_code=404'],
+       items:[
+         'Build GET /notes and POST /notes using an in-memory list',
+         'Add GET /notes/{id} that returns one note or a 404 if it doesn\u2019t exist'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 to-do REST API', uses:['FastAPI', 'BaseModel', '@app GET/POST/PUT/DELETE', 'HTTPException', 'status codes'],
+       items:[
+         'API exposes endpoints to create, read, update, and delete a task',
+         'Request and response data is validated using defined models, not raw dicts',
+         'Listing tasks supports retrieving either all tasks or one specific task by ID',
+         'Invalid requests (missing fields, wrong types) are rejected with a clear error, not a server crash',
+         'API is self-documenting (interactive docs are reachable and accurate)'
+       ]},
+     ],
+     example:{
+       input:'POST /tasks with body {"title": "Buy milk"}',
+       output:'201 response with {"id": 1, "title": "Buy milk", "done": false}',
+       note:'GET /tasks/999 (a nonexistent ID) should return a 404 with a clear message, not a 500 server error.'
+     },
+     acceptance:[
+       'Sending a request with a missing required field returns a 4xx error, not a 500',
+       'Requesting a task ID that doesn\u2019t exist returns a clear "not found" response',
+       'Creating a task and then immediately fetching it by ID returns matching data',
+       'All endpoints are visible and testable from the auto-generated docs page'
+     ],
+     links:[
+       {label:'FastAPI official tutorial', url:'https://fastapi.tiangolo.com/tutorial/'},
+       {label:'FastAPI \u2014 First Steps', url:'https://fastapi.tiangolo.com/tutorial/first-steps/'}
+     ]},
+    {w:'wk 16-17', t:'real database', d:'SQLAlchemy ORM + PostgreSQL locally.',
+     output:'To-do API persisted to Postgres',
+     context:'An API that loses everything on restart isn\u2019t a real service. This connects the schema work from week 11-12 to the API work from week 13-15 \u2014 the two finally meet.',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 first ORM model', uses:['create_engine()', 'declarative_base()', 'Column', 'metadata.create_all()'],
+       items:[
+         'Install sqlalchemy and psycopg2-binary, create a connection to a local Postgres database',
+         'Define one simple model (e.g. a Note with id and text) and create its table'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 basic CRUD script', uses:['Session', 'session.add()', 'session.query()', 'session.commit()'],
+       items:[
+         'Write code that inserts a new row using the ORM, then queries it back',
+         'Write code that updates an existing row and confirms the change persisted'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 related models', uses:['relationship()', 'ForeignKey', 'session.query().filter()'],
+       items:[
+         'Define two related models (e.g. Author and Post) with a foreign key',
+         'Query all posts for a specific author using the ORM\u2019s relationship feature'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 one real endpoint on Postgres', uses:['Session', 'session.query()', 'session.add()', 'Depends(get_db)'],
+       items:[
+         'Take just your GET /notes endpoint from last week and make it read from the real database instead of memory',
+         'Confirm restarting the server still shows previously created notes'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 to-do API on Postgres', uses:['SQLAlchemy ORM', 'create_engine', 'relationship', 'Session', 'Depends()'],
+       items:[
+         'API\u2019s in-memory storage is fully replaced with a real Postgres database',
+         'Data models match the schema designed earlier (users, tasks, relationship intact)',
+         'All CRUD endpoints now read from and write to the actual database',
+         'Restarting the API does not lose any previously created data'
+       ]},
+     ],
+     example:{
+       input:'POST /tasks {"title": "Read book"}, then restart the API server, then GET /tasks',
+       output:'"Read book" still appears in the list after restart',
+       note:'Before this week, restarting would have wiped the in-memory list \u2014 this is the concrete proof persistence now works.'
+     },
+     acceptance:[
+       'Stopping and restarting the API server still shows previously created tasks',
+       'Data inspected directly in the database (outside the API) matches what the API reports',
+       'Creating a task for a non-existent user is rejected, not silently allowed',
+       'No leftover in-memory list or dict is still being used anywhere in the code'
+     ],
+     links:[
+       {label:'SQLAlchemy ORM tutorial', url:'https://docs.sqlalchemy.org/en/20/orm/quickstart.html'},
+       {label:'FastAPI + SQL databases guide', url:'https://fastapi.tiangolo.com/tutorial/sql-databases/'}
+     ]},
+    {w:'wk 18', t:'authentication', d:'Password hashing, JWT tokens.',
+     output:'Login/signup added to the API',
+     context:'An API anyone can call without identity isn\u2019t safe to put in front of real users. Authentication is the line between a toy project and something resembling production software.',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 password hash script', uses:['passlib CryptContext', 'pwd_context.hash()', 'pwd_context.verify()'],
+       items:[
+         'Install passlib[bcrypt], write a script that hashes a password and verifies it matches',
+         'Confirm that hashing the same password twice produces two different hash strings'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 token creator', uses:['jose.jwt.encode()', 'jose.jwt.decode()', 'SECRET_KEY'],
+       items:[
+         'Install python-jose, write a script that creates a JWT containing a user ID',
+         'Decode that same token and print its contents back out'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 one protected route', uses:['Depends()', 'HTTPBearer', 'HTTPException(401)'],
+       items:[
+         'Build one FastAPI route that requires an Authorization header to be present at all',
+         'Make that route reject requests with no header using a proper 401 response'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 login-only flow', uses:['CryptContext', 'jwt.encode()', 'jwt.decode()', '@app.post(/login)'],
+       items:[
+         'Build POST /signup and POST /login against a hardcoded test user, returning a real JWT on success',
+         'Test that a wrong password is correctly rejected'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 full auth on the to-do API', uses:['passlib', 'python-jose', 'Depends()', 'HTTPBearer', 'jwt', 'HTTPException(401)'],
+       items:[
+         'Users can sign up with a password that is never stored in plain text',
+         'Users can log in and receive a token proving their identity',
+         'At least one endpoint (e.g. viewing tasks) requires a valid token to access',
+         'Requests without a valid token are rejected, not allowed through'
+       ]},
+     ],
+     example:{
+       input:'POST /login {"email": "ana@email.com", "password": "secret123"}',
+       output:'{"access_token": "eyJhbGciOiJIUzI1NiIs...", "token_type": "bearer"}',
+       note:'GET /tasks without an Authorization header should return 401 Unauthorized, every time, no exceptions.'
+     },
+     acceptance:[
+       'Inspecting the database directly never reveals a readable password',
+       'A request to a protected endpoint with no token is rejected',
+       'A request to a protected endpoint with an expired or tampered token is rejected',
+       'A full flow of signup \u2192 login \u2192 access protected data works end to end without manual intervention'
+     ],
+     links:[
+       {label:'FastAPI \u2014 OAuth2 with Password and JWT', url:'https://fastapi.tiangolo.com/tutorial/security/oauth2-jwt/'},
+       {label:'JWT.io \u2014 understand tokens visually', url:'https://jwt.io/introduction'}
+     ]},
+    {w:'wk 19', t:'API testing & docs', d:'Postman/Thunder Client, clear API documentation.',
+     output:'Documented, manually-verified API',
+     context:'An API nobody can figure out how to use is functionally broken, even if the code works. This week is about proving your API behaves correctly and communicating how to use it.',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 first saved request', uses:['Postman/Thunder Client', 'GET request', 'save request'],
+       items:[
+         'Install Postman or Thunder Client, send a manual GET request to one of your endpoints',
+         'Save that request so it can be reused without retyping it'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 testing one failure case', uses:['missing field test', 'invalid token test', 'status code check'],
+       items:[
+         'Manually send a request with a missing required field and record what happens',
+         'Manually send a request with an invalid or missing auth token and record what happens'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 documenting one endpoint', uses:['FastAPI docstring', '@app.get(summary=)', 'response_model='],
+       items:[
+         'Add a docstring/summary to one endpoint so it shows clearly in /docs',
+         'Add example request bodies to that same endpoint\u2019s documentation'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 documented mini flow', uses:['Postman collection', 'saved requests', 'example bodies'],
+       items:[
+         'Pick 3 related endpoints (e.g. signup, login, create task) and fully document and test just those',
+         'Save all 3 as a small Postman/Thunder collection'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 fully documented API', uses:['Postman', 'docstrings', 'summary=', 'response_model', 'status codes'],
+       items:[
+         'Every endpoint has a saved example request demonstrating correct usage',
+         'Edge cases are tested manually and the actual behavior is recorded (missing fields, bad auth, invalid IDs)',
+         'Every endpoint has a clear description of what it does, visible in the docs',
+         'A reviewer (even yourself, cold) could understand how to use the whole API from the docs alone'
+       ]},
+     ],
+     example:{
+       input:'A new developer opens your /docs page with zero prior context',
+       output:'They can successfully sign up, log in, and create a task using only what they see there',
+       note:'If you had to explain anything to them out loud that wasn\u2019t in the docs, that\u2019s a documentation gap to fix.'
+     },
+     acceptance:[
+       'Every endpoint listed in your collection/docs has at least one successful and one failed example',
+       'Descriptions explain purpose, not just repeat the endpoint name',
+       'Someone unfamiliar with the project could complete a full signup-to-task-creation flow using only the docs',
+       'No endpoint exists in the code that isn\u2019t documented'
+     ],
+     links:[
+       {label:'Postman \u2014 Getting Started', url:'https://learning.postman.com/docs/getting-started/introduction/'},
+       {label:'Thunder Client (VS Code extension)', url:'https://marketplace.visualstudio.com/items?itemName=rangav.vscode-thunder-client'}
+     ]},
+    {w:'wk 20', t:'polish & ship', d:'Buffer week \u2014 fix bugs, refactor, write a README.',
+     output:'Task Manager API v1.0',
+     context:'Shipping is a skill separate from building. This week is entirely about closing gaps between "works on my machine, mostly" and "I could show this to a stranger."',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 status code audit', uses:['HTTPException', 'status_code=404/401/422'],
+       items:[
+         'Go through every endpoint and confirm it returns 200/201 only on real success',
+         'Add proper 404 responses for any "not found" cases that currently return something else'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 fix 3 real bugs', uses:['try/except', 'HTTPException', 'manual testing'],
+       items:[
+         'Deliberately try to break each endpoint with weird input and note any crashes',
+         'Fix at least 3 real bugs you find this way'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 README first draft', uses:['README.md', 'markdown', '## sections', 'code blocks'],
+       items:[
+         'Write a README section explaining exactly how to run the project from scratch',
+         'Add a section listing 2-3 example requests with their expected responses'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 fresh clone test', uses:['git clone', 'README steps', 'uvicorn main:app'],
+       items:[
+         'Delete your local project folder entirely and re-clone it from GitHub',
+         'Follow only your own README to get it running again \u2014 fix the README for any step that didn\u2019t work'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 Task Manager API v1.0', uses:['git tag v1.0', 'git push --tags', 'README.md', 'HTTPException', 'status codes'],
+       items:[
+         'Every known bug from weeks 13\u201319 is fixed or explicitly documented as a known limitation',
+         'Every endpoint returns an appropriate status code for both success and failure cases',
+         'A complete README exists: what it is, how to run it, example usage',
+         'The project is tagged as a versioned release in git'
+       ]},
+     ],
+     example:{
+       input:'git tag v1.0 && git push --tags, then clone the repo fresh into an empty folder',
+       output:'Project runs end-to-end on the first try, no fixes needed',
+       note:'This is your real go/no-go check: if it doesn\u2019t run clean from a fresh clone, it\u2019s not actually v1.0 yet.'
+     },
+     acceptance:[
+       'A person with zero context could clone the repo and get it running using only the README',
+       'No endpoint returns a generic success code (200) for something that actually failed',
+       'Re-running your full test flow (signup, login, CRUD) from scratch works without manual fixes',
+       'The release is tagged and visible on GitHub'
+     ],
+     links:[
+       {label:'Make a README \u2014 template & guide', url:'https://www.makeareadme.com/'}
+     ]},
+  ]
+},
+{
+  id:'p3', tag:'phase 03', title:'engineering discipline', sub:'weeks 21\u201328', color:'amber',
+  nodes:[
+    {w:'wk 21-22', t:'git, deeper', d:'Branching strategy, pull requests, resolving conflicts.',
+     output:'Practiced branch + PR + conflict workflow',
+     context:'Solo commits to main don\u2019t prepare you for team environments, where every change goes through a branch and a review. This week simulates that reality on your own repo.',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 first branch', uses:['git checkout -b', 'git merge', 'git branch -d'],
+       items:[
+         'Create a new branch, make a small change, commit it, then switch back to main and confirm the change isn\u2019t there',
+         'Merge that branch into main and confirm the change now appears'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 first pull request', uses:['git push -u origin branch', 'GitHub PR UI', 'PR description'],
+       items:[
+         'Push a feature branch to GitHub and open a pull request against main',
+         'Write a clear PR description explaining what changed and why'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 deliberate conflict', uses:['conflict markers <<<', 'manual resolution', 'git add', 'git commit'],
+       items:[
+         'On purpose, edit the same line on two different branches, then try to merge them',
+         'Resolve the resulting conflict by hand, keeping the correct combined logic'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 full feature workflow', uses:['git checkout -b', 'git commit', 'git push', 'GitHub PR merge'],
+       items:[
+         'Pick one small real improvement to an old project, build it entirely on a branch',
+         'Open a PR, "review" it yourself critically, then merge it'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 practiced branch + PR + conflict workflow', uses:['git branch', 'git merge', 'conflict resolution', 'git rebase -i'],
+       items:[
+         'A new feature is built entirely on its own branch, not directly on main',
+         'A pull request is opened describing the change before merging',
+         'A deliberate merge conflict is created and resolved correctly (not by deleting one side blindly)',
+         'Commit history on the feature branch is clean before merging (not "fix typo" x10)'
+       ]},
+     ],
+     example:{
+       input:'git checkout -b feature/add-categories, edit code, then git merge main while both branches touched the same line',
+       output:'Git reports a conflict; you manually choose which lines stay, then commit the resolution',
+       note:'After resolving, run your tests \u2014 a conflict that "resolves" but breaks functionality wasn\u2019t resolved correctly.'
+     },
+     acceptance:[
+       'main branch never has a broken or half-finished feature committed directly to it',
+       'The PR description explains what changed and why, not just "updates"',
+       'After resolving the conflict, both pieces of intended logic are still present and correct',
+       'You can explain, without notes, the difference between merge and rebase'
+     ],
+     links:[
+       {label:'Atlassian \u2014 Git branching tutorial', url:'https://www.atlassian.com/git/tutorials/using-branches'},
+       {label:'GitHub \u2014 About pull requests', url:'https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests'}
+     ]},
+    {w:'wk 23-24', t:'testing', d:'pytest, unit tests, fixtures, mocking.',
+     output:'Test suite, 70%+ coverage',
+     context:'Untested code is unverified code \u2014 it might work, or it might just look like it works. This week proves your API actually does what you claim, automatically, every time.',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 first unit test', uses:['pytest', 'def test_*()', 'assert', 'pytest -v'],
+       items:[
+         'Install pytest, write one test for a simple pure function (e.g. an add() function)',
+         'Run pytest and confirm you see 1 passed'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 testing failure cases', uses:['pytest.raises()', 'assert ==', 'edge case input'],
+       items:[
+         'Write a test that confirms a function raises an error on bad input',
+         'Write a test that checks an edge case (e.g. empty list, zero, negative number)'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 API test client', uses:['TestClient(app)', 'client.get()', 'client.post()', 'response.status_code'],
+       items:[
+         'Use FastAPI\u2019s TestClient to write one test for a GET endpoint',
+         'Write one test for a POST endpoint checking both the status code and the response body'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 fixtures', uses:['@pytest.fixture', 'scope=function', 'yield', 'conftest.py'],
+       items:[
+         'Write a pytest fixture that creates a fresh test database before each test runs',
+         'Use that fixture across at least 3 different tests'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 70%+ coverage test suite', uses:['pytest', 'TestClient', '@pytest.fixture', 'pytest --cov=app', 'conftest.py'],
+       items:[
+         'Pure logic functions (e.g. password hashing, validation) have isolated unit tests',
+         'Every API endpoint has at least one test for a success case and one for a failure case',
+         'Tests run against a separate test database, never the real one',
+         'Test coverage is measured and reaches at least 70%'
+       ]},
+     ],
+     example:{
+       input:'pytest --cov=app',
+       output:'34 passed in 1.2s, coverage: 76%',
+       note:'Now comment out one line of real validation logic and rerun \u2014 a passing test that doesn\u2019t catch this means the test isn\u2019t actually testing anything useful.'
+     },
+     acceptance:[
+       'Running the full test suite once produces a consistent pass/fail result every time (no flaky tests)',
+       'Deliberately breaking a piece of logic causes the relevant test to fail',
+       'Tests can run with a single command, with no manual setup steps',
+       'Test database state never leaks into or affects your real development database'
+     ],
+     links:[
+       {label:'pytest \u2014 official getting started', url:'https://docs.pytest.org/en/stable/getting-started.html'},
+       {label:'FastAPI \u2014 Testing guide', url:'https://fastapi.tiangolo.com/tutorial/testing/'}
+     ]},
+    {w:'wk 25', t:'code quality', d:'Linting (ruff), formatting (black), type hints.',
+     output:'Linted, typed, formatted codebase',
+     context:'Code quality tools exist so that style stops being a debate and becomes automatic. This week is about removing every avoidable inconsistency from your codebase.',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 first lint pass', uses:['ruff check .', 'ruff --fix', 'reading ruff output'],
+       items:[
+         'Install ruff, run it on one old project, and fix the first 5 warnings it shows',
+         'Run it again and confirm those 5 warnings are gone'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 auto-formatting', uses:['black .', 'black --diff', 'black --check'],
+       items:[
+         'Install black, run it on a messy file and review what it changed',
+         'Deliberately write badly-formatted code, then let black fix it automatically'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 typed functions', uses:['def fn(param: str) -> int:', 'Optional[str]', 'List[dict]'],
+       items:[
+         'Add type hints to 3 functions in an old project (parameters and return type)',
+         'Add a type hint for a function that returns a list of dicts'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 one fully clean file', uses:['pyproject.toml', '[tool.ruff]', '[tool.black]'],
+       items:[
+         'Pick your messiest old file and bring it to zero linter warnings, fully formatted, fully typed',
+         'Save a ruff + black config file so settings are consistent next time'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 linted, typed, formatted codebase', uses:['ruff', 'black', 'type hints', 'pyproject.toml'],
+       items:[
+         'A linter and formatter are configured and run across every project',
+         'Every function signature includes type hints for parameters and return values',
+         'All linter warnings are resolved, not suppressed without reason',
+         'Formatting is consistent across every file in every project'
+       ]},
+     ],
+     example:{
+       input:'ruff check . on your task API project',
+       output:'All checks passed!',
+       note:'If you see warnings, fix the actual issue rather than adding a "noqa" comment to silence it \u2014 the point is cleaner code, not a quiet linter.'
+     },
+     acceptance:[
+       'Running the linter on the final codebase produces zero unresolved warnings',
+       'Running the formatter again makes no further changes (it\u2019s already fully formatted)',
+       'Function signatures clearly show expected input and output types without needing to read the body',
+       'Configuration for linting/formatting is saved in the repo, not just run ad hoc'
+     ],
+     links:[
+       {label:'Ruff \u2014 official docs', url:'https://docs.astral.sh/ruff/'},
+       {label:'Real Python \u2014 Type Checking guide', url:'https://realpython.com/python-type-checking/'}
+     ]},
+    {w:'wk 26-27', t:'design patterns', d:'Error handling, logging, env configs, project structure.',
+     output:'Restructured, production-shaped codebase',
+     context:'A working API isn\u2019t the same as a maintainable one. This week reorganizes your project to look and behave like something a team could actually work on together.',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 one env variable', uses:['load_dotenv()', 'os.getenv()', '.env file', 'python-dotenv'],
+       items:[
+         'Install python-dotenv, move one hardcoded value (e.g. a port number) into a .env file',
+         'Confirm the app reads it correctly using os.getenv()'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 replace prints with logging', uses:['import logging', 'logging.basicConfig()', 'logger.info()', 'logger.error()'],
+       items:[
+         'Replace 3 print() statements in an old project with proper logging calls',
+         'Configure logging to show timestamps and severity level (INFO, ERROR, etc.)'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 one custom exception', uses:['class CustomError(Exception):', 'raise CustomError()', 'except CustomError'],
+       items:[
+         'Create one custom exception class (e.g. TaskNotFoundError) and raise it in one place',
+         'Catch that custom exception and turn it into a clean API error response'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 reorganize one module', uses:['app/routers/', 'app/models/', 'APIRouter()', 'from app.routers import'],
+       items:[
+         'Take one messy file from an old project and split it into routes/models/logic folders',
+         'Confirm the app still runs identically after the reorganization'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 production-shaped codebase', uses:['dotenv', 'logging', 'custom exceptions', 'APIRouter', 'os.getenv'],
+       items:[
+         'Project is organized into clear layers (e.g. routes, models, business logic, config)',
+         'Secrets (database passwords, signing keys) are loaded from environment variables, never hardcoded',
+         'The application logs meaningful events (errors, key actions), not raw print statements',
+         'Custom, named error types exist for at least 2 distinct failure scenarios'
+       ]},
+     ],
+     example:{
+       input:'Delete your .env file, then try to start the API',
+       output:'App refuses to start with a clear error like "Missing required env var: DATABASE_URL"',
+       note:'If the app starts anyway using some hidden fallback, that\u2019s a silent failure waiting to bite you in production.'
+     },
+     acceptance:[
+       'Searching the codebase for hardcoded secrets returns nothing',
+       'Logs clearly show what happened when something fails, without needing to reproduce the bug manually',
+       'A new contributor could find where "task creation logic" lives within 30 seconds of looking at the folder structure',
+       'Removing the .env file causes the app to fail to start with a clear error, not a silent wrong default'
+     ],
+     links:[
+       {label:'FastAPI \u2014 Bigger Applications structure', url:'https://fastapi.tiangolo.com/tutorial/bigger-applications/'},
+       {label:'Real Python \u2014 Logging in Python', url:'https://realpython.com/python-logging/'}
+     ]},
+    {w:'wk 28', t:'code review practice', d:'Review open-source PRs, get feedback on yours.',
+     output:'First real pull request opened',
+     context:'Writing code in isolation hides bad habits. Getting real feedback, and giving it, is how you calibrate against industry standards rather than your own assumptions.',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 reading PRs', uses:['GitHub: search good-first-issue', 'reading merged PR diffs'],
+       items:[
+         'Find one open-source Python repo and read through 5 of its recently merged PRs',
+         'Note 3 patterns you notice in how good PR descriptions are written'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 finding an issue', uses:['GitHub Issues', 'fork repo', 'git clone fork'],
+       items:[
+         'Search "good first issue" labeled issues on GitHub and find one you understand',
+         'Comment on it expressing interest before starting any work, if the project asks for that'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 requesting feedback', uses:['community post', 'r/learnpython', 'specific feedback question'],
+       items:[
+         'Post one of your own projects in a community (r/learnpython, a Discord) asking for specific feedback',
+         'Reply to at least one piece of feedback you receive, asking a clarifying question if needed'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 small real contribution', uses:['git checkout -b fix/', 'git push', 'GitHub PR', 'PR description'],
+       items:[
+         'Fix a small, well-understood issue (typo, small doc fix, small bug) in an open-source repo',
+         'Write a clear PR description explaining the change before submitting it'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 first real pull request opened', uses:['git fork', 'git branch', 'PR', 'GitHub Issues', 'community feedback'],
+       items:[
+         'A beginner-friendly open-source issue is identified and understood before starting',
+         'A small, real contribution (fix, doc improvement, small feature) is made and submitted as a PR',
+         'Feedback is requested on your own project from at least one outside person or community',
+         'At least one piece of received feedback is actually applied, not just acknowledged'
+       ]},
+     ],
+     example:{
+       input:'You open a PR fixing a typo in an open-source project\u2019s docs',
+       output:'Maintainer merges it, or requests a small specific change you can address',
+       note:'A PR that gets ignored for weeks with zero response is normal too \u2014 try a different repo rather than taking it personally.'
+     },
+     acceptance:[
+       'Your PR is small enough to be reviewed in one sitting by a maintainer',
+       'You can explain why your change was needed, in the PR description, without rereading your own code first',
+       'You can point to a specific, concrete change made to your own project as a direct result of feedback',
+       'You did not argue defensively when receiving critical feedback'
+     ],
+     links:[
+       {label:'GitHub \u2014 good first issues finder', url:'https://goodfirstissue.dev/'},
+       {label:'r/learnpython', url:'https://www.reddit.com/r/learnpython/'}
+     ]},
+  ]
+},
+{
+  id:'p4', tag:'phase 04', title:'infra & deployment (aws)', sub:'weeks 29\u201340', color:'amber',
+  nodes:[
+    {w:'wk 29-30', t:'linux fundamentals', d:'Filesystem, permissions, processes, SSH, bash scripting.',
+     output:'Comfortable, working remote Linux session',
+     context:'Every server you\u2019ll ever deploy to is Linux. Before touching cloud infrastructure, you need to be unafraid of a remote terminal with no GUI.',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 navigation practice', uses:['ls -la', 'cd', 'mkdir', 'rm', 'cat', 'grep'],
+       items:[
+         'Practice cd, ls -la, pwd, mkdir, and rm on a test folder structure',
+         'Use cat and grep to find a specific word inside a text file'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 permissions & processes', uses:['chmod 600/755', 'ls -la', 'ps aux', 'kill PID'],
+       items:[
+         'Run chmod on a file and observe how the permission string changes with ls -la',
+         'Run ps aux and identify which process is using the most resources'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 SSH key pair', uses:['ssh-keygen -t ed25519', '~/.ssh/id_ed25519.pub', 'authorized_keys'],
+       items:[
+         'Generate an SSH key pair using ssh-keygen',
+         'Explain in your own words the difference between the public and private key'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 first remote script', uses:['ssh -i key.pem user@ip', 'bash script', 'chmod +x', './script.sh'],
+       items:[
+         'Launch a free-tier EC2 instance and connect to it via SSH',
+         'Write and run a small bash script directly on that remote server'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 comfortable remote Linux session', uses:['ssh', 'chmod', 'bash', 'ps aux', 'grep', 'cat'],
+       items:[
+         'A remote Linux server (a free-tier cloud instance) is reachable via SSH using a key pair, not a password',
+         'Basic file and process operations can be performed entirely from the command line',
+         'At least one small automation script exists and runs successfully on the server',
+         'File permissions are understood well enough to explain who can read/write/execute a given file'
+       ]},
+     ],
+     example:{
+       input:'ssh -i mykey.pem ubuntu@<ec2-ip>, then ls -la',
+       output:'You connect without a password prompt and see the server\u2019s files listed with permissions',
+       note:'Try chmod 600 on a file and explain out loud what that permission actually allows \u2014 if you can\u2019t, that\u2019s the real gap to close before moving on.'
+     },
+     acceptance:[
+       'You can SSH into the server, navigate, and perform a task without looking up every single command',
+       'A script you wrote runs on the server and produces the expected result',
+       'You can explain what chmod 600 vs chmod 777 means and why one is dangerous',
+       'Disconnecting and reconnecting via SSH works without re-entering a password'
+     ],
+     links:[
+       {label:'Linux Journey \u2014 free interactive course', url:'https://linuxjourney.com/'},
+       {label:'AWS \u2014 EC2 free tier getting started', url:'https://aws.amazon.com/ec2/getting-started/'}
+     ]},
+    {w:'wk 31-32', t:'docker', d:'Images, containers, Dockerfiles, docker-compose.',
+     output:'Containerized API + database',
+     context:'"It works on my machine" is the most common excuse for broken deployments. Containers exist to eliminate that excuse entirely by packaging the app with everything it needs to run.',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 first container', uses:['docker run', 'docker ps', 'docker images', 'docker run -p'],
+       items:[
+         'Run docker run hello-world and read through what actually happened in the output',
+         'Run a basic nginx container and visit it in your browser on localhost'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 simple Dockerfile', uses:['FROM', 'WORKDIR', 'COPY', 'RUN', 'CMD', 'docker build -t'],
+       items:[
+         'Write a Dockerfile for a tiny script (not your full app yet) that just prints something',
+         'Build that image and run it, confirming the output appears'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 containerize your API', uses:['Dockerfile', 'docker build', 'docker run -p 8000:8000'],
+       items:[
+         'Write a Dockerfile for your actual FastAPI app',
+         'Build and run it, confirming /docs loads from the containerized version'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 two services together', uses:['docker-compose.yml', 'services:', 'depends_on:', 'environment:', 'volumes:'],
+       items:[
+         'Write a docker-compose.yml running your API alongside a Postgres container',
+         'Confirm the API container can successfully connect to the database container'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 containerized API + database', uses:['Dockerfile', 'docker-compose.yml', 'docker build', 'docker-compose up -d'],
+       items:[
+         'Your API has a defined container image build process',
+         'The container runs the API correctly when started fresh, with no manual setup steps inside it',
+         'A multi-service definition exists that runs both the API and its database together',
+         'The full system can be started and stopped with a single command'
+       ]},
+     ],
+     example:{
+       input:'docker-compose up -d, then curl http://localhost:8000/health',
+       output:'{"status": "ok"} returned, both API and database containers show as running',
+       note:'docker-compose down then docker-compose up again should bring everything back with your data still intact (assuming you set up a volume for the database).'
+     },
+     acceptance:[
+       'Deleting all local containers/images and rebuilding from scratch still results in a working system',
+       'The API container can reach the database container by name, not a hardcoded IP',
+       'Stopping and restarting the whole stack preserves the database data',
+       'Someone with Docker installed but nothing else could run your entire stack from the repo alone'
+     ],
+     links:[
+       {label:'Docker \u2014 official Python guide', url:'https://docs.docker.com/language/python/'},
+       {label:'Docker Compose \u2014 official docs', url:'https://docs.docker.com/compose/'}
+     ]},
+    {w:'wk 33', t:'aws core services', d:'IAM (users/roles/policies), VPC basics, S3.',
+     output:'Least-privilege IAM setup + working S3 bucket',
+     context:'Cloud accounts are dangerous by default if misconfigured. This week is about the unglamorous but critical practice of access control, before you build anything that\u2019s actually exposed to the internet.',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 IAM user setup', uses:['AWS IAM Console', 'Create User', 'Attach policies', 'aws configure'],
+       items:[
+         'Create a non-root IAM user for yourself and log in as that user instead',
+         'Attach a single narrow permission (e.g. read-only S3 access) and confirm it works as expected'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 S3 basics', uses:['aws s3 mb', 'aws s3 cp', 'aws s3 ls'],
+       items:[
+         'Create an S3 bucket and upload one file to it via the console',
+         'Download that same file using the AWS CLI instead of the console'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 reading security groups', uses:['Security group inbound rules', 'CIDR 0.0.0.0/0 vs specific IP'],
+       items:[
+         'Look at an existing security group and identify what each rule actually allows',
+         'Explain out loud what would happen if a rule allowed 0.0.0.0/0 on port 22'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 scoped access test', uses:['aws iam attach-user-policy', 'aws iam get-user', 'permission boundary'],
+       items:[
+         'Try performing an action your IAM user does NOT have permission for and confirm it\u2019s denied',
+         'Adjust the permission policy to allow it, then confirm the action now succeeds'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 least-privilege IAM + working S3', uses:['AWS IAM', 'S3', 'security groups', 'aws configure', 'least privilege'],
+       items:[
+         'A non-root IAM user exists and is used for all daily work, never the root account',
+         'Permissions granted to that user are scoped to only what\u2019s actually needed',
+         'An S3 bucket exists and supports uploading and retrieving a file',
+         'You understand, at least conceptually, what a VPC and a security group control'
+       ]},
+     ],
+     example:{
+       input:'aws s3 cp test.txt s3://my-first-bucket/ then aws s3 cp s3://my-first-bucket/test.txt downloaded.txt',
+       output:'downloaded.txt is identical to the original test.txt',
+       note:'Try the same action using an IAM user with no S3 permissions granted \u2014 it should be denied, proving least-privilege is actually working.'
+     },
+     acceptance:[
+       'You cannot recall the last time you logged in using the root account for routine tasks',
+       'Attempting an action outside your IAM user\u2019s granted permissions is correctly denied',
+       'A file uploaded to S3 can be retrieved and matches the original',
+       'You can explain, without notes, why "0.0.0.0/0" in a security group is risky'
+     ],
+     links:[
+       {label:'AWS \u2014 IAM best practices', url:'https://docs.aws.amazon.com/IAM/latest/UserGuide/best-practices.html'},
+       {label:'AWS \u2014 free tier overview', url:'https://aws.amazon.com/free/'}
+     ]},
+    {w:'wk 34-35', t:'ec2 deployment', d:'Launch instance, security groups, deploy container manually.',
+     output:'API live on a public EC2 address',
+     context:'This is the first time your project becomes reachable by anyone on the internet, not just you. Treat this milestone seriously \u2014 it\u2019s the actual moment of "deployment."',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 launching EC2', uses:['AWS EC2 Console', 'Launch Instance', 't2.micro', 'key pair'],
+       items:[
+         'Launch a free-tier EC2 instance from the console with default settings',
+         'SSH into it and confirm you can run basic commands'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 security groups for real', uses:['Security group Edit inbound', 'Custom TCP port 8000', 'My IP'],
+       items:[
+         'Edit the instance\u2019s security group to open only port 8000',
+         'Confirm a port you didn\u2019t open is correctly blocked from outside'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 Docker on the server', uses:['ssh -i key.pem', 'sudo apt install docker.io', 'sudo docker run'],
+       items:[
+         'Install Docker on the EC2 instance via SSH',
+         'Run a simple test container on the server to confirm Docker works there'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 deploy a throwaway app', uses:['git clone', 'docker build', 'docker run -d -p 8000:8000', 'curl'],
+       items:[
+         'Deploy a tiny "hello world" containerized app to the EC2 instance, just to prove the pipeline of steps works',
+         'Visit its public address from your own laptop\u2019s browser'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 API live on a public EC2 address', uses:['EC2', 'security groups', 'SSH', 'Docker', 'docker-compose up -d', 'public IP'],
+       items:[
+         'An EC2 instance is running and reachable via SSH',
+         'The instance has the necessary runtime (Docker) installed to run your stack',
+         'Your project is deployed and running on the instance using the same container setup from weeks 31-32',
+         'The API is reachable over the public internet on a defined port'
+       ]},
+     ],
+     example:{
+       input:'From your laptop (not the server): curl http://<ec2-public-ip>:8000/docs',
+       output:'The FastAPI docs page loads successfully over the public internet',
+       note:'Try hitting a port you didn\u2019t open in the security group \u2014 it should time out or be refused, proving you\u2019re not accidentally exposing more than intended.'
+     },
+     acceptance:[
+       'Visiting the public address from your own device (off the server) successfully reaches the API',
+       'Restarting the EC2 instance and re-deploying produces the same working result',
+       'Only the specific port your API needs is open to the internet, nothing else',
+       'You can describe what would need to change to point a real domain name at this address'
+     ],
+     links:[
+       {label:'AWS \u2014 EC2 security groups guide', url:'https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ec2-security-groups.html'}
+     ]},
+    {w:'wk 36', t:'managed database', d:'RDS (Postgres), secrets via SSM Parameter Store.',
+     output:'API connected to managed RDS database',
+     context:'Running your own database on the same server as your app is fragile and doesn\u2019t scale. Managed databases separate that concern \u2014 and handling secrets properly here is a real production skill.',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 launching RDS', uses:['AWS RDS Console', 'Free tier Postgres', 'endpoint URL', 'port 5432'],
+       items:[
+         'Create a free-tier RDS Postgres instance through the console',
+         'Connect to it from your local machine using a database client to confirm it works'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 restricting access', uses:['RDS security group inbound', 'source = EC2 security group'],
+       items:[
+         'Adjust the RDS security group so only your EC2 instance can reach it, not the open internet',
+         'Confirm your own laptop can no longer connect directly once that\u2019s in place'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 secrets storage', uses:['aws ssm put-parameter --type SecureString', 'aws ssm get-parameter --with-decryption'],
+       items:[
+         'Store a test secret in SSM Parameter Store and retrieve it via the AWS CLI',
+         'Practice retrieving that secret from a small script instead of hardcoding it'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 point one service at RDS', uses:['DATABASE_URL env var', 'os.getenv(DATABASE_URL)', 'SQLAlchemy URL'],
+       items:[
+         'Update just your local development environment to use the RDS database instead of local Postgres',
+         'Confirm a full create-then-read flow works correctly against RDS'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 API connected to managed RDS', uses:['RDS', 'SSM Parameter Store', 'security groups', 'os.getenv', 'SQLAlchemy'],
+       items:[
+         'A managed Postgres database instance exists separately from your EC2 server',
+         'Only your application server can reach the database, not the open internet',
+         'Database credentials are stored in a secrets manager, not in plain text in code or config files',
+         'Your deployed API reads and writes successfully to this managed database'
+       ]},
+     ],
+     example:{
+       input:'POST /tasks via the live API, then check the RDS database directly using psql',
+       output:'The new task row appears in the RDS tasks table, matching what the API returned',
+       note:'Try connecting to the RDS endpoint directly from your laptop \u2014 it should be refused unless you explicitly allowed your IP.'
+     },
+     acceptance:[
+       'The database is unreachable directly from your personal machine\u2019s IP unless explicitly allowed',
+       'Searching your codebase and deployment files for the raw database password returns nothing',
+       'Data created through the live API is visible when inspecting the database directly',
+       'You can explain why separating the database from the app server matters for reliability'
+     ],
+     links:[
+       {label:'AWS \u2014 RDS getting started', url:'https://aws.amazon.com/rds/getting-started/'},
+       {label:'AWS \u2014 Systems Manager Parameter Store', url:'https://docs.aws.amazon.com/systems-manager/latest/userguide/systems-manager-parameter-store.html'}
+     ]},
+    {w:'wk 37-38', t:'CI/CD pipeline', d:'GitHub Actions building image + deploying to ECR/EC2.',
+     output:'Automated pipeline: push \u2192 test \u2192 deploy',
+     context:'Manual deployment doesn\u2019t scale and invites human error. A real CI/CD pipeline is what separates "I can deploy" from "my team can ship safely, constantly."',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 first GitHub Action', uses:['.github/workflows/main.yml', 'on: push:', 'jobs:', 'runs-on:', 'steps:'],
+       items:[
+         'Create a .github/workflows file that just runs "echo hello" on every push',
+         'Confirm it shows up and runs successfully in the Actions tab on GitHub'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 running tests automatically', uses:['- run: pip install -r requirements.txt', '- run: pytest', 'GitHub Actions logs'],
+       items:[
+         'Add a step that installs dependencies and runs pytest on every push',
+         'Push a deliberately failing test and confirm the workflow shows red'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 building an image', uses:['docker build -t', 'aws ecr get-login-password', 'docker push', 'ECR'],
+       items:[
+         'Add a step that builds your Docker image inside the workflow',
+         'Push the built image to a container registry (e.g. Amazon ECR)'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 manual-trigger deploy', uses:['ssh via GitHub secret', 'docker pull', 'docker-compose up -d --no-deps'],
+       items:[
+         'Write a script (run manually for now) that pulls the latest image on your EC2 server and restarts the container',
+         'Confirm running that script updates the live app correctly'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 automated pipeline: push \u2192 test \u2192 deploy', uses:['GitHub Actions YAML', 'pytest step', 'docker build/push', 'ECR', 'SSH deploy'],
+       items:[
+         'Every push to the main branch automatically runs your full test suite',
+         'A failing test blocks deployment from happening at all',
+         'A passing build automatically builds and pushes a new container image',
+         'The new image is automatically deployed to your running server without manual SSH steps'
+       ]},
+     ],
+     example:{
+       input:'git push origin main with a deliberately failing test included',
+       output:'GitHub Actions shows a red X on the test step; deploy step never runs',
+       note:'Fix the test and push again \u2014 you should see the pipeline go green and the live API update automatically within a few minutes, with no manual SSH.'
+     },
+     acceptance:[
+       'Pushing a change with a deliberately broken test does NOT result in a deployment',
+       'Pushing a working change results in the live API reflecting that change without you touching the server',
+       'The full pipeline\u2019s logs are inspectable and show clearly where any failure occurred',
+       'You can roll back to a previous working state if a deployment goes wrong'
+     ],
+     links:[
+       {label:'GitHub Actions \u2014 official docs', url:'https://docs.github.com/en/actions'},
+       {label:'AWS \u2014 deploy to ECS/EC2 with GitHub Actions', url:'https://docs.aws.amazon.com/AmazonECS/latest/developerguide/cicd-pipeline.html'}
+     ]},
+    {w:'wk 39', t:'monitoring', d:'CloudWatch logs/alarms, health checks.',
+     output:'Alerting when the app goes down',
+     context:'A deployed app you have to manually check on isn\u2019t really "in production" \u2014 production means you find out about problems before your users complain.',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 health check endpoint', uses:['@app.get(/health)', 'return {status: ok}'],
+       items:[
+         'Add a GET /health route that returns a simple status message',
+         'Confirm it responds correctly both locally and on your deployed server'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 sending logs to CloudWatch', uses:['CloudWatch Logs console', 'Log Group', 'Log Stream', 'aws logs tail'],
+       items:[
+         'Configure your EC2 instance or container to send logs to CloudWatch Logs',
+         'View a recent log entry directly in the CloudWatch console'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 creating an alarm', uses:['CloudWatch Alarms', 'metric: CPUUtilization', 'threshold', 'alarm actions'],
+       items:[
+         'Create a CloudWatch alarm based on a simple metric (e.g. CPU usage)',
+         'Manually trigger conditions that would set off the alarm and confirm it fires'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 get notified', uses:['SNS topic', 'Subscribe email', 'confirm subscription', 'connect alarm to SNS'],
+       items:[
+         'Set up an SNS topic and subscribe your email to it',
+         'Connect that topic to your alarm so you actually receive an email when it fires'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 alerting when the app goes down', uses:['FastAPI /health', 'CloudWatch Logs', 'CloudWatch Alarms', 'SNS'],
+       items:[
+         'The application exposes a simple health-check endpoint reporting its own status',
+         'Application logs are centrally collected, not stuck only on the server\u2019s local disk',
+         'An alert is configured to trigger automatically when the server is unhealthy',
+         'You receive a real notification (email or similar) when that alert fires'
+       ]},
+     ],
+     example:{
+       input:'sudo docker stop task-api (deliberately killing the running app)',
+       output:'You receive an email/SNS alert within a few minutes saying the health check is failing',
+       note:'Start it back up and confirm the alarm clears on its own \u2014 an alert that never resolves itself is just as broken as one that never fires.'
+     },
+     acceptance:[
+       'Deliberately stopping the application triggers a notification within a reasonable time window',
+       'You can view recent application logs without needing to SSH into the server',
+       'The health-check endpoint accurately reflects whether the app is actually working, not just "process exists"',
+       'A resolved issue (app back up) is reflected by the alarm clearing, not staying stuck'
+     ],
+     links:[
+       {label:'AWS \u2014 CloudWatch getting started', url:'https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/GettingStarted.html'}
+     ]},
+    {w:'wk 40', t:'infra as code', d:'Terraform basics \u2014 provision EC2 + RDS as code.',
+     output:'Entire infra defined in version-controlled code',
+     context:'Infrastructure clicked together by hand in a console is infrastructure nobody can reliably reproduce. This week turns your manually-built setup into something repeatable, reviewable, and disposable.',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 Terraform basics', uses:['terraform init', 'provider aws', '.tf file', 'terraform plan', 'terraform apply'],
+       items:[
+         'Install Terraform, run terraform init in an empty folder',
+         'Write a minimal .tf file that creates just one S3 bucket, then apply it'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 defining EC2 as code', uses:['resource aws_instance', 'ami =', 'instance_type ='],
+       items:[
+         'Write a .tf resource block matching your existing EC2 instance\u2019s configuration',
+         'Run terraform plan and review what it says without applying yet'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 defining RDS as code', uses:['resource aws_db_instance', 'resource aws_security_group', 'ingress/egress'],
+       items:[
+         'Write a .tf resource block for your RDS database',
+         'Add the security group rules connecting EC2 and RDS as code too'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 plan, don\u2019t break prod', uses:['terraform plan -out=plan.tfplan', 'review plan diff', 'terraform apply plan.tfplan'],
+       items:[
+         'Run terraform plan against your real existing infrastructure and read every line of the diff',
+         'Identify anything in the plan that would have surprised you if you\u2019d applied it blindly'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 entire infra defined in code', uses:['Terraform', 'resource blocks', 'variables.tf', 'terraform plan/apply/destroy'],
+       items:[
+         'Your EC2 instance, security groups, and RDS database are all defined in infrastructure-as-code files',
+         'Applying the configuration from scratch can recreate your entire infrastructure',
+         'Changes to infrastructure go through a plan/preview step before being applied',
+         'The infrastructure code is committed to version control alongside your application'
+       ]},
+     ],
+     example:{
+       input:'terraform destroy (deletes everything) then terraform apply (rebuilds from your .tf files)',
+       output:'EC2 instance and RDS database both come back up, fully configured, with no manual console clicks',
+       note:'If you had to fix even one thing manually in the console after apply, something is missing from your code, not your infrastructure.'
+     },
+     acceptance:[
+       'Destroying your existing manually-built infrastructure and reapplying your code recreates a working environment',
+       'Reviewing the plan output before applying clearly shows what will change and what won\u2019t',
+       'No infrastructure exists that only lives in the AWS console and isn\u2019t represented in your code',
+       'A teammate could understand your entire infrastructure setup just by reading the code, without console access'
+     ],
+     links:[
+       {label:'Terraform \u2014 AWS getting started tutorial', url:'https://developer.hashicorp.com/terraform/tutorials/aws-get-started'}
+     ]},
+  ]
+},
+{
+  id:'p5', tag:'phase 05', title:'portfolio & job hunt', sub:'weeks 41\u201352', color:'amber',
+  nodes:[
+    {w:'wk 41-44', t:'capstone project', d:'Multi-user app using everything: FastAPI, Postgres, auth, Docker, AWS, CI/CD.',
+     output:'One flagship project, deployed and live',
+     context:'This is the project that will actually get you interviews. It needs to be small enough to finish, but real enough to demonstrate every skill from the past 10 months working together.',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 scope on paper', uses:['paper schema design', 'ER diagram', 'table names', 'foreign keys'],
+       items:[
+         'Write down your idea in exactly 3 sentences before writing any code',
+         'Sketch the database schema by hand, including every table and relationship'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 core models', uses:['SQLAlchemy models', 'relationship()', 'metadata.create_all()', 'seed script'],
+       items:[
+         'Build the database models and confirm they create tables correctly',
+         'Seed a few rows manually to confirm the relationships work as expected'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 core endpoints locally', uses:['FastAPI routes', 'BaseModel', 'Depends(get_db)', 'JWT auth', 'pytest'],
+       items:[
+         'Build and test the main CRUD endpoints fully on your local machine first',
+         'Add authentication to at least 2 of those endpoints'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 local end-to-end flow', uses:['docker-compose up', 'curl /health', 'manual user flow test'],
+       items:[
+         'Walk through the entire core user flow yourself, locally, start to finish',
+         'Fix any rough edges you hit before attempting to deploy anything'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 one flagship project, deployed and live', uses:['FastAPI', 'SQLAlchemy', 'JWT', 'Docker', 'GitHub Actions', 'AWS EC2', 'RDS'],
+       items:[
+         'The app models at least 2-3 related resources (e.g. users, bookings, items) with a real relationship between them',
+         'At least 2 endpoints require authentication to access',
+         'The full system is containerized, deployed to AWS, and reachable by a public URL',
+         'The deployment pipeline (tests + auto-deploy) from Phase 4 is actively used for this project',
+         'At least one real person outside your own head has used it and given feedback'
+       ]},
+     ],
+     example:{
+       input:'A friend with zero context visits your live URL and tries to use the app unassisted',
+       output:'They successfully sign up, perform the core action (e.g. create a booking), and see it persist',
+       note:'If they get stuck or confused at any step, that\u2019s real signal \u2014 not a reason to over-explain in person, but a reason to fix the app or its onboarding.'
+     },
+     acceptance:[
+       'A stranger could use the live URL to sign up and perform the app\u2019s core action without your help',
+       'Pushing a code change deploys automatically and the live app reflects it',
+       'The scope is deliberately small \u2014 you can describe the entire feature set in 3 sentences',
+       'You received at least one piece of real feedback and can describe what you\u2019d change next'
+     ],
+     links:[
+       {label:'roadmap.sh \u2014 backend project ideas', url:'https://roadmap.sh/projects'}
+     ]},
+    {w:'wk 45', t:'portfolio polish', d:'READMEs, architecture diagrams, short demo video/GIF.',
+     output:'Self-explanatory portfolio',
+     context:'A great project with a confusing README gets skipped by recruiters in seconds. This week is entirely about making your work understandable without you standing next to it explaining.',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 bare-minimum README', output:'One-paragraph README for your oldest project', uses:['README.md', 'markdown headers', '# Title', '## Section', 'code blocks'],
+       items:[
+         'Write a first draft README: what it is, tech stack, how to run it',
+         'Have someone unfamiliar with the project read just the first paragraph and tell you what they think it does'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 README with usage examples', output:'README with example requests/commands added', uses:['## How to run', 'bash code block', 'git clone steps'],
+       items:[
+         'Add a "how to run it" section with exact commands, plus 2-3 example inputs and outputs',
+         'Test the instructions yourself on a clean checkout to confirm they actually work'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 architecture diagram', output:'Hand-drawn or simple architecture diagram', uses:['draw.io / excalidraw / hand sketch', 'boxes + arrows', 'component labels'],
+       items:[
+         'Draw your system\u2019s architecture by hand or in a simple tool, even roughly',
+         'Practice explaining it out loud in under 60 seconds, timing yourself'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 demo recording', output:'Short screen recording of the app in use', uses:['ScreenToGif / OBS', 'screen capture', 'GIF export'],
+       items:[
+         'Record a short screen capture of yourself using the live app',
+         'Watch it back and cut out any dead air or confusing moments'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 self-explanatory portfolio', output:'Self-explanatory portfolio', uses:['README.md', 'architecture diagram', 'demo GIF/video', 'GitHub profile pin'],
+       items:[
+         'The capstone README explains what it does, the tech stack, how to run it, and includes a live demo link',
+         'A simple architecture diagram exists showing how the pieces connect',
+         'A short recording exists showing the app actually being used',
+         'Your top projects are pinned and visible on your GitHub profile',
+         'Combines everything from Projects 1-4: clear README, examples, diagram, and demo all in one repo'
+       ]},
+     ],
+     example:{
+       input:'A recruiter lands on your repo and spends 30 seconds looking at it',
+       output:'They understand what the project does, see it\u2019s live, and can click through to try it themselves',
+       note:'Show your README to someone outside tech for 30 seconds \u2014 if they can\u2019t say back to you what the project does, it needs to be simpler.'
+     },
+     acceptance:[
+       'Someone could understand what your project does within 30 seconds of landing on the repo',
+       'The architecture diagram could be explained by you, out loud, in under a minute',
+       'The demo recording shows a real, complete user flow, not just a homepage',
+       'Your GitHub profile leads with your best work, not your oldest work'
+     ],
+     links:[
+       {label:'ScreenToGif (free recording tool)', url:'https://www.screentogif.com/'}
+     ]},
+    {w:'wk 46', t:'resume & linkedin', d:'Tailored to backend/junior infra roles.',
+     output:'Resume reviewed by others',
+     context:'Your resume is a filter, not a biography. It needs to survive both an automated screener and a 6-second human glance.',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 rewritten bullet points', output:'3 rewritten resume bullet points', uses:['action verbs', 'specific tech names', 'before/after rewrite'],
+       items:[
+         'Take one vague sentence about your work and rewrite it 3 different ways, each more specific',
+         'Practice the formula: action verb + what you built + tech used + result'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 first resume draft', output:'Full first-draft resume', uses:['resume template', 'bullet points', 'tech stack section', 'project links'],
+       items:[
+         'Write a full first draft listing your capstone and 2 other projects with specific tech named',
+         'Check that no bullet point could describe literally any other candidate'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 LinkedIn profile', output:'Updated, matching LinkedIn profile', uses:['LinkedIn headline', 'About section', 'Featured section', 'project URLs'],
+       items:[
+         'Update your LinkedIn headline and about section to match your resume',
+         'Add your top 2-3 projects under the "Featured" section with links'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 reviewed and revised draft', output:'Resume revised after first feedback round', uses:['resume PDF', 'email to reviewer', 'incorporate feedback'],
+       items:[
+         'Send your resume draft to one person and ask specifically what\u2019s unclear or weak',
+         'Revise based on that one round of feedback before asking anyone else'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 resume reviewed by others', output:'Resume reviewed by others', uses:['resume', 'LinkedIn', 'bullet point formula', 'peer review', 'ATS format'],
+       items:[
+         'Resume lists your capstone and at least 2 other projects with specific technologies named',
+         'Bullet points describe outcomes and what was built, not just "learned X"',
+         'LinkedIn profile reflects the same projects and skills as the resume',
+         'At least 2-3 other people have reviewed the resume before it\u2019s used to apply',
+         'Combines everything from Projects 1-4: strong bullets, matching LinkedIn, multiple rounds of feedback'
+       ]},
+     ],
+     example:{
+       input:'A bullet point: "Worked on a Python project"',
+       output:'Rewritten as: "Built a REST API with FastAPI and PostgreSQL, deployed on AWS with an automated CI/CD pipeline"',
+       note:'Run this test on every bullet: could this sentence describe literally any other candidate too? If yes, it needs a specific detail added.'
+     },
+     acceptance:[
+       'A reviewer unfamiliar with your work can tell, from the resume alone, what you\u2019re capable of building',
+       'No bullet point is vague enough to apply to literally any other candidate',
+       'Every project mentioned on the resume is actually visible and working if someone clicks through',
+       'You\u2019ve incorporated at least one piece of reviewer feedback into the final version'
+     ],
+     links:[
+       {label:'r/EngineeringResumes', url:'https://www.reddit.com/r/EngineeringResumes/'}
+     ]},
+    {w:'wk 47-48', t:'DSA fundamentals', d:'Arrays, hashmaps, basic recursion \u2014 enough not to freeze.',
+     output:'Comfortable solving easy problems live',
+     context:'Junior interviews still often include basic problem-solving rounds. The goal isn\u2019t mastery \u2014 it\u2019s removing the freeze response when given an unfamiliar problem on the spot.',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 array basics solved', output:'3 solved array problems, with notes', uses:['list indexing', 'list slicing', 'max()/min()', 'sorted()', 'set()'],
+       items:[
+         'Solve 3 easy array problems (e.g. find max, reverse array, remove duplicates)',
+         'For each, say out loud what the time complexity roughly is before checking'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 hashmap patterns solved', output:'Two Sum + one duplicate-finder solved', uses:['dict as hashmap', 'dict.get()', 'for k,v in dict.items()', 'set()'],
+       items:[
+         'Solve "two sum" using a hashmap, without looking at any solution first',
+         'Solve one "find duplicates" style problem using a set or dict'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 recursion basics solved', output:'Factorial + nested-sum recursive functions', uses:['def factorial(n):', 'base case', 'recursive call', 'return'],
+       items:[
+         'Write a recursive function to calculate factorial',
+         'Write a recursive function to sum all numbers in a nested list'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 timed practice round', output:'3 problems solved under a 15-min timer each', uses:['LeetCode 15-min timer', 'brute force first', 'explain approach first'],
+       items:[
+         'Solve 3 new easy problems back to back, giving yourself 15 minutes each',
+         'For any you couldn\u2019t finish, write down specifically where you got stuck'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 comfortable solving easy problems live', output:'Comfortable solving easy problems live', uses:['arrays', 'hashmaps', 'recursion', 'O(n) time complexity', 'LeetCode easy'],
+       items:[
+         'A meaningful number of easy-level problems have been solved, focused on arrays and hashmaps',
+         'You can explain your approach out loud before writing any code, every time',
+         'You understand, at a basic practical level, why one approach is faster than another',
+         'Previously struggled-with problems are revisited from scratch, not from memory of the old answer',
+         'Combines everything from Projects 1-4: arrays, hashmaps, recursion, and timed pressure all comfortable'
+       ]},
+     ],
+     example:{
+       input:'two_sum([2, 7, 11, 15], 9)',
+       output:'[0, 1] (because nums[0] + nums[1] == 9)',
+       note:'Try explaining out loud, before coding, why a hashmap approach beats checking every pair \u2014 that explanation matters as much as the working code in an interview.'
+     },
+     acceptance:[
+       'Given a new, unseen easy problem, you can produce a working solution within a reasonable time without panicking',
+       'You can explain the rough efficiency of your own solution without being asked',
+       'Revisited problems are solved correctly without referencing your previous solution',
+       'You keep and can show notes on patterns you previously struggled with'
+     ],
+     links:[
+       {label:'NeetCode \u2014 curated easy problem list', url:'https://neetcode.io/'},
+       {label:'LeetCode \u2014 Easy collection', url:'https://leetcode.com/problemset/all/?difficulty=EASY'}
+     ]},
+    {w:'wk 49', t:'system design basics', d:'Load balancers, caching, queues \u2014 for juniors.',
+     output:'Can explain your own architecture clearly',
+     context:'You don\u2019t need to design Twitter at scale as a junior \u2014 but you do need to be able to talk intelligently about how systems generally fit together, including your own.',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 core concepts notes', output:'Written explanation of load balancer/cache/queue', uses:['notes doc', 'load balancer concept', 'cache concept', 'queue concept'],
+       items:[
+         'Watch or read one explanation each of load balancers, caching, and queues',
+         'Write a 2-sentence explanation of each in your own words, no copying'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 applied to your own project', output:'List of where these concepts apply to your capstone', uses:['system diagram', 'bottleneck identification', 'cache hit/miss concept'],
+       items:[
+         'Identify where a cache could realistically help in your own capstone',
+         'Identify one part of your capstone that could become a bottleneck under heavy load'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 recorded explanation', output:'90-second recorded architecture explanation', uses:['self-recording', 'timer 90s', 'component names in explanation'],
+       items:[
+         'Set a timer and explain your project\u2019s architecture out loud in under 90 seconds',
+         'Record yourself doing it once and listen back for unclear or rushed parts'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 live mock Q&A', output:'Answered scaling question live, unscripted', uses:['whiteboard verbal', 'scale question', 'trade-offs language'],
+       items:[
+         'Have someone ask you "what would you change if this had 10,000 users tomorrow?"',
+         'Answer without notes, then refine your answer based on what felt shaky'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 explain your own architecture clearly', output:'Can explain your own architecture clearly', uses:['system design vocab', 'architecture diagram', 'verbal explanation', 'trade-offs'],
+       items:[
+         'You can explain, conceptually, what a load balancer, a cache, and a queue are each for',
+         'You can describe your own capstone\u2019s architecture clearly in under 2 minutes, unscripted',
+         'You can identify one realistic next improvement to your own project\u2019s architecture',
+         'You\u2019ve reviewed real explanations of these concepts from more than one source',
+         'Combines everything from Projects 1-4: concepts, applied thinking, clear delivery, live Q&A'
+       ]},
+     ],
+     example:{
+       input:'Interviewer asks: "Walk me through your project\u2019s architecture"',
+       output:'A clear 90-second answer: FastAPI \u2192 Postgres on RDS \u2192 Docker \u2192 EC2 \u2192 GitHub Actions CI/CD, mentioning auth and the data relationship',
+       note:'Record yourself answering this out loud once \u2014 listening back is usually the fastest way to spot where your explanation gets vague or rushed.'
+     },
+     acceptance:[
+       'You can explain your own project\u2019s architecture to someone with no context, out loud, without notes',
+       'You can answer "what would you change if this had 10,000 users tomorrow?" with a reasonable, specific answer',
+       'You don\u2019t need to look anything up to explain the basic purpose of caching or a queue',
+       'You can do this calmly under mild pressure (practice with another person, not just alone)'
+     ],
+     links:[
+       {label:'ByteByteGo \u2014 System Design for Beginners (YouTube)', url:'https://www.youtube.com/c/ByteByteGo'}
+     ]},
+    {w:'wk 50-52', t:'apply & interview', d:'Start applying, mock interviews, iterate on feedback.',
+     output:'Applications out, interviews booked',
+     context:'Everything before this was preparation. This is the actual job search \u2014 treat it with the same discipline and iteration mindset as the rest of the roadmap.',
+     stages:[
+       {type:'drill', label:'Project 1 (Beginner) \u2014 application tracker', output:'Working spreadsheet + first 2-3 applications sent', uses:['Google Sheets / Excel', 'columns: company/role/date/status/notes'],
+       items:[
+         'Build a simple spreadsheet with columns: company, role, date applied, status, notes',
+         'Apply to 2-3 roles just to test your resume and process end to end'
+       ]},
+       {type:'easy', label:'Project 2 (Easy) \u2014 tailored resume versions', output:'2 role-specific resume summary versions', uses:['resume PDF', 'job posting keywords', 'tailored summary'],
+       items:[
+         'Take one job posting and rewrite your resume summary to match its emphasis (backend vs infra)',
+         'Do this for 2 different postings and compare the two versions side by side'
+       ]},
+       {type:'mid', label:'Project 3 (Intermediate) \u2014 interview prep doc', output:'5 drafted answers to likely interview questions', uses:['interview Q&A doc', 'STAR method', 'project walkthrough'],
+       items:[
+         'Write down 5 likely questions about your capstone and draft short answers',
+         'Practice answering one out loud, recording yourself, and reviewing it critically'
+       ]},
+       {type:'mini', label:'Project 4 (Advanced) \u2014 first mock interview', output:'Completed mock interview with written feedback notes', uses:['Pramp.com / peer mock', 'timed session', 'feedback notes'],
+       items:[
+         'Complete one full mock interview with a peer or platform like Pramp',
+         'Write down 2 specific things to improve based on that session'
+       ]},
+       {type:'capstone', label:'Project 5 (Pro/Capstone) \u2014 applications out, interviews booked', output:'Applications out, interviews booked', uses:['job tracker', 'tailored resume', 'Pramp', 'mock interview', 'follow-up'],
+       items:[
+         'A consistent weekly volume of applications is sent to relevant junior roles',
+         'Resume summary is adjusted depending on whether a role leans backend or infra',
+         'At least 2 mock interviews are completed before real interviews begin',
+         'Every application and its outcome is tracked somewhere, not relying on memory',
+         'Combines everything from Projects 1-4: tracked applications, tailored resumes, practiced answers, real interview reps'
+       ]},
+     ],
+     example:{
+       input:'Week 1 of applying: 8 applications sent, tracked in a spreadsheet',
+       output:'By week 3, the tracker shows responses, rejections, and at least one interview scheduled',
+       note:'A 90%+ rejection rate at this stage is normal for junior roles \u2014 the tracker exists so you can see real progress in volume and responses, not just feel discouraged by silence.'
+     },
+     acceptance:[
+       'You can see, in your tracker, exactly how many applications were sent and their current status',
+       'You\u2019ve received feedback (formal or informal) on at least one real interview and made a concrete adjustment because of it',
+       'You don\u2019t repeat the same mistake across multiple interviews once it\u2019s been identified',
+       'You\u2019re applying broadly enough that one rejection doesn\u2019t feel like the end of the search'
+     ],
+     links:[
+       {label:'Pramp \u2014 free peer mock interviews', url:'https://www.pramp.com/'}
+     ]},
+  ]
+},
+];
+
+const STORAGE_KEY = 'swe_path_progress_v2';
+
+function loadProgress(){
+  try{
+    const raw = localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : {};
+  }catch(e){ return {}; }
+}
+function saveProgress(state){
+  try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }catch(e){}
+}
+
+let progress = loadProgress();
+let totalNodes = 0;
+let totalProjects = 0;
+DATA.forEach(p => p.nodes.forEach(n => {
+  totalNodes++;
+  if(n.stages) totalProjects += n.stages.length;
+}));
+
+function nodeKey(phaseId, idx){ return phaseId + '_' + idx; }
+function projectKey(phaseId, nodeIdx, stageIdx){ return phaseId + '_' + nodeIdx + '_p_' + stageIdx; }
+
+function renderDetail(n, phaseId, nodeIdx){
+  let html = '';
+  html += `<div class="block-label green">// output</div><div class="output-spec">${n.output}</div>`;
+
+  if(n.context){
+    html += `<div class="block-label">// context</div><div class="context-text">${n.context}</div>`;
+  }
+
+  if(n.stages && n.stages.length){
+    html += `<div class="block-label">// projects (beginner \u2192 pro)</div>`;
+    n.stages.forEach((stage, i) => {
+      const pkey = projectKey(phaseId, nodeIdx, i);
+      const isProjectDone = !!progress[pkey];
+      html += `<div class="stage-group ${stage.type}${isProjectDone ? ' project-done' : ''}" data-pkey="${pkey}">`;
+      html += `<div class="stage-label"><span class="stage-num">${i+1}</span>${stage.label}</div>`;
+      if(stage.output){
+        html += `<div class="stage-output">deliverable: <b>${stage.output}</b></div>`;
+      }
+      if(stage.uses && stage.uses.length){
+        html += `<div class="stage-uses"><span class="uses-label">use:</span>`;
+        stage.uses.forEach(u => { html += `<span class="use-pill">${u}</span>`; });
+        html += `</div>`;
+      }
+      html += `<ul class="req-list">`;
+      stage.items.forEach(item => { html += `<li>${item}</li>`; });
+      html += `</ul>`;
+      html += `<div class="stage-check-row">`;
+      html += `<button class="stage-check-btn${isProjectDone ? ' checked' : ''}" data-pkey="${pkey}" type="button"><div class="stage-check-icon"></div>${isProjectDone ? 'Done' : 'Mark done'}</button>`;
+      html += `<span class="stage-done-label">completed \u2713</span>`;
+      html += `</div>`;
+      html += `</div>`;
+    });
+  } else if(n.requirements && n.requirements.length){
+    html += `<div class="block-label">// requirements</div><ul class="req-list">`;
+    n.requirements.forEach(r => { html += `<li>${r}</li>`; });
+    html += `</ul>`;
+  }
+
+  if(n.example){
+    html += `<div class="block-label">// example</div><div class="example-box">`;
+    html += `<div class="example-row in"><span class="example-tag">input</span><span class="example-val">${n.example.input}</span></div>`;
+    html += `<div class="example-row out"><span class="example-tag">output</span><span class="example-val">${n.example.output}</span></div>`;
+    if(n.example.note){
+      html += `<div class="example-note">${n.example.note}</div>`;
+    }
+    html += `</div>`;
+  }
+
+  if(n.acceptance && n.acceptance.length){
+    html += `<div class="block-label">// acceptance criteria</div><ul class="ac-list">`;
+    n.acceptance.forEach(a => { html += `<li>${a}</li>`; });
+    html += `</ul>`;
+  }
+
+  if(n.links && n.links.length){
+    html += `<div class="block-label">// resources</div><div class="res-list">`;
+    n.links.forEach(l => { html += `<a href="${l.url}" target="_blank" rel="noopener noreferrer">${l.label}</a>`; });
+    html += `</div>`;
+  }
+
+  return html;
+}
+
+function render(){
+  const section = document.getElementById('pathSection');
+  section.innerHTML = '';
+
+  DATA.forEach((phase) => {
+    const block = document.createElement('div');
+    block.className = 'phase-block';
+
+    const header = document.createElement('div');
+    header.className = 'phase-header';
+    header.innerHTML = `
+      <span class="phase-tag ${phase.color}">${phase.tag}</span>
+      <span class="phase-title">${phase.title}</span>
+      <span class="phase-sub">${phase.sub}</span>
+    `;
+    block.appendChild(header);
+
+    const list = document.createElement('div');
+    list.className = 'node-list';
+    const fillLine = document.createElement('div');
+    fillLine.className = 'fill-line';
+    list.appendChild(fillLine);
+
+    let doneInPhase = 0;
+
+    phase.nodes.forEach((n, idx) => {
+      const key = nodeKey(phase.id, idx);
+      const isDone = !!progress[key];
+      if(isDone) doneInPhase++;
+
+      const node = document.createElement('div');
+      node.className = 'node' + (isDone ? ' done' : '');
+      node.dataset.key = key;
+
+      node.innerHTML = `
+        <div class="node-dot" role="checkbox" aria-checked="${isDone}" aria-label="Mark ${n.t} as done" tabindex="0">${CHECK_SVG}</div>
+        <div class="node-main">
+          <div class="node-week">${n.w}</div>
+          <div class="node-body">
+            <div class="node-title">${n.t}</div>
+            <div class="node-desc">${n.d}</div>
+          </div>
+          <div class="node-chevron">
+            <svg width="14" height="14" viewBox="0 0 16 16" fill="none"><path d="M5 3L11 8L5 13" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </div>
+        </div>
+        <div class="node-detail">${renderDetail(n, phase.id, idx)}</div>
+      `;
+
+      const dot = node.querySelector('.node-dot');
+      dot.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleNodeDone(key, node);
+      });
+      dot.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter' || e.key === ' '){
+          e.preventDefault();
+          toggleNodeDone(key, node);
+        }
+      });
+
+      const main = node.querySelector('.node-main');
+      main.addEventListener('click', () => {
+        node.classList.toggle('open');
+      });
+
+      // per-project checkbox listeners
+      node.querySelectorAll('.stage-check-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const pkey = btn.dataset.pkey;
+          progress[pkey] = !progress[pkey];
+          saveProgress(progress);
+          btn.classList.toggle('checked', !!progress[pkey]);
+          btn.textContent = '';
+          const icon = document.createElement('div');
+          icon.className = 'stage-check-icon';
+          btn.appendChild(icon);
+          btn.appendChild(document.createTextNode(progress[pkey] ? 'Done' : 'Mark done'));
+          const stageGroup = btn.closest('.stage-group');
+          if(stageGroup){
+            stageGroup.classList.toggle('project-done', !!progress[pkey]);
+          }
+          updateStats();
+        });
+      });
+
+      list.appendChild(node);
+    });
+
+    block.appendChild(list);
+    section.appendChild(block);
+
+    const pct = phase.nodes.length ? (doneInPhase / phase.nodes.length) * 100 : 0;
+    fillLine.style.height = pct + '%';
+  });
+
+  updateStats();
+}
+
+function toggleNodeDone(key, nodeEl){
+  progress[key] = !progress[key];
+  saveProgress(progress);
+
+  const openKeys = Array.from(document.querySelectorAll('.node.open')).map(el => el.dataset.key);
+  render();
+  openKeys.forEach(k => {
+    const el = document.querySelector(`.node[data-key="${k}"]`);
+    if(el) el.classList.add('open');
+  });
+}
+
+function updateStats(){
+  let nodesDone = 0;
+  let projectsDone = 0;
+
+  DATA.forEach((phase, pi) => {
+    phase.nodes.forEach((n, ni) => {
+      const nk = nodeKey(phase.id, ni);
+      if(progress[nk]) nodesDone++;
+      if(n.stages){
+        n.stages.forEach((s, si) => {
+          const pk = projectKey(phase.id, ni, si);
+          if(progress[pk]) projectsDone++;
+        });
+      }
+    });
+  });
+
+  const pct = totalProjects ? Math.round((projectsDone / totalProjects) * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressPct').textContent = pct + '%';
+  document.getElementById('statDone').textContent = projectsDone + '/' + totalProjects;
+
+  let currentPhaseNum = DATA.length;
+  for(let i=0;i<DATA.length;i++){
+    const phase = DATA[i];
+    let phaseDone = 0;
+    phase.nodes.forEach((n, idx) => { if(progress[nodeKey(phase.id, idx)]) phaseDone++; });
+    if(phaseDone < phase.nodes.length){ currentPhaseNum = i+1; break; }
+  }
+  document.getElementById('statPhase').textContent = currentPhaseNum + ' / ' + DATA.length;
+}
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  if(confirm('Reset all progress? This clears every checked project and node on this device.')){
+    progress = {};
+    saveProgress(progress);
+    render();
+  }
+});
+
+render();
+</script>
+
+</body>
+</html>
